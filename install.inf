@@ -1,0 +1,16 @@
+[info]
+title=MarkdownEditor
+desc=Some description
+type=cudatext-plugin
+subdir=cuda_MarkdownEditor
+homepage=
+
+[item1]
+section=events
+events=on_change,on_key,on_caret,on_insert
+
+[item2]
+section=commands
+caption=MySample
+method=run
+
