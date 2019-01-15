@@ -1,16 +1,11 @@
 [info]
-title=MarkdownEditor
-desc=Some description
+title=Markdown Editing
+desc=Helpers for editing Markdown documents
 type=cudatext-plugin
-subdir=cuda_MarkdownEditor
-homepage=
+subdir=cuda_markdown_editing
+homepage=https://github.com/medvosa/cuda_markdown_editing
 
 [item1]
 section=events
 events=on_change,on_key,on_caret,on_insert
-
-[item2]
-section=commands
-caption=MySample
-method=run
-
+lexers=Markdown

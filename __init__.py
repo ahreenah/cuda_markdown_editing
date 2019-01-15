@@ -1,3 +1,10 @@
+a='''
+currently working:
+* lists
+  + bulleted lists
+* doubling next symbols: # , ~ , ' , "
+* strikethrough by clicking Ctrl + ~
+'''
 import os
 from cudatext import *
 
@@ -12,7 +19,6 @@ def str_to_bool(s): return s=='1'
 class Command:
     
     def __init__(self):
-
         global option_int
         global option_bool
         option_int = int(ini_read(fn_config, 'op', 'option_int', str(option_int)))
@@ -49,6 +55,7 @@ class Command:
     def on_change(self, ed_self):
         pass
     def on_key(self, ed_self, key, state):
+    	
     	'''curArr = ed_self.get_carets()[0]
     	print(curArr)
     	y1 = curArr[1]
@@ -56,6 +63,16 @@ class Command:
     	#x1, y1, x2, y2 = curArr
     	print(str(y1)+' '+str(y2))'''
     	print('k '+str(key))
+    	if key==192:
+    		if 's' in state:
+    			print('stroking')
+    		car = ed_self.get_carets()[0]
+    		if (car[2] != -1) or (car[3] != -1):
+    		    print('caret for stroking is : '+str(car))
+    		    ed_self.insert(car[2],car[3],'~~')
+    		    ed_self.insert(car[0],car[1],'~~')
+    		    return False	
+    		print('state '+state)
     	if key==13:
     		#enter#
     		print('enter pressed' + str(ed_self.get_carets()[0][1]))
@@ -68,6 +85,8 @@ class Command:
     			strOld=strOld[1:]
     			indent+=1
     		print('Went from line '+strOld)
+    		if len(strOld)==0:
+    			return True
     		print('first symbol was: '+strOld[0]) 
     		if strOld[0] in ['*','+','-']:
     			curArr = ed_self.get_carets()[0]
@@ -79,6 +98,30 @@ class Command:
     			print(caret)
     			ed_self.set_caret(indent,caret[1]+1)
     			return False
+    		numArr=['1','2','3','4','5','6','7','8','9','0']
+    		if strOld[0] in numArr:
+    			print('numbered list?')
+    			s=''
+    			i=0
+    			ll=len(strOld)
+    			strOld+=' '
+    			while(strOld[i] in numArr) and (i<ll):
+    				s=s+strOld[i]
+    				i = i+1
+    			if (i<ll):
+    				if(strOld[i]=='.'):
+    					print ('numbered list!!!')
+    					nm=int(s)
+    					print ('next number is '+str(nm+1)) 
+    					car = ed_self.get_carets()[0]
+    					print('went from line' +str(car[1]))
+    					ed_self.insert(car[0],car[1],'\n'+straddF+str(nm+1)+'.')
+    					ed_self.set_caret(i+2+len(str(nm+1)),car[1]+1)
+    					return False
+    			print('counted num is: '+str(s))
+    		else:
+    			print('not numbered')
+    	
     	if key==9:
     		#tab#
     		strOldNum=ed_self.get_carets()[0][1]
@@ -121,7 +164,7 @@ class Command:
     		
     def on_insert(self, ed_self, text):
     	print('inserted '+text)
-    	if text in ['"',"'",'#']:
+    	if text in ['"',"'",'#','~']:
     		#print('doubling')
     		
     		curArr = ed_self.get_carets()[0]
@@ -130,3 +173,23 @@ class Command:
     		ed_self.insert(x,y,text)
     	else:
     		print('not doubling')
+    	'''
+        *
+        *
+        *
+        *
+        	+
+        	+
+        		-
+        		-
+        		-
+        			*
+        			*
+        #sdf#*
+        ##sdfsve##
+        ###sdferge###
+        ####sdfsrege####
+        
+        ~~asdsf~~
+        ~~poiuytrewq~~
+    	'''
