@@ -85,7 +85,7 @@ class Command:
     			strOld=strOld[1:]
     			indent+=1
     		print('Went from line '+strOld)
-    		if len(strOld)==0:
+    		if not strOld:
     			return True
     		print('first symbol was: '+strOld[0]) 
     		if strOld[0] in ['*','+','-']:
