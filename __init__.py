@@ -2,9 +2,13 @@ a='''
 currently working:
 * lists
   + bulleted lists
+  + numbered lists
 * doubling next symbols: # , ~ , ' , "
 * strikethrough by clicking Ctrl + ~
+* blockuotes 
+* autocompleting line consiting only of '=' or '-' by pressing tab as it size should be equeal to size of the previous line 
 '''
+
 import os
 from cudatext import *
 
@@ -19,6 +23,7 @@ def str_to_bool(s): return s=='1'
 class Command:
     
     def __init__(self):
+        self.needDoublingRes=False
         global option_int
         global option_bool
         option_int = int(ini_read(fn_config, 'op', 'option_int', str(option_int)))
@@ -63,16 +68,87 @@ class Command:
     	#x1, y1, x2, y2 = curArr
     	print(str(y1)+' '+str(y2))'''
     	print('k '+str(key))
+    	if key==51:
+    		#reshetka
+    		if 's' in state:
+    			cur=ed_self.get_carets()[0]
+    			if not cur[3]==-1:
+    				if not cur[2]==-1:
+    					x1,y1,x2,y2=cur[0],cur[1],cur[2],cur[3]
+    					if x2>x1:
+    						x2+=1
+    					else:
+    						x1+=1
+    					print('selected text from '+str(x1))
+    					if self.needDoublingRes:
+    						ed_self.insert(x2,y2,'#')
+    					ed_self.insert(0,y1,'#')
+    					ln=ed_self.get_text_line(y1)
+    					i=0
+    					while(i<len(ln)):
+    						if ln[i]=='#':
+    							i+=1
+    						else:
+    							break
+    					if i<=6:
+    						ed_self.set_sel_rect(i,y1,len(ln),y1)
+    					else:
+    						while(len(ln)>0):
+    							if ln[0]=='#':
+    								ln=ln[1:]
+    							else:
+    								break
+    						ed_self.set_text_line(y1,ln)
+    					return False
+    			else:
+    				car = ed_self.get_carets()[0]
+    				y   = car[1]
+    				st  = ed_self.get_text_line(y)
+    				sto = st
+    				while(st[0] in [' ','\t']):
+    					st=st[1:]
+    				i=0
+    				numres=0
+    				while(i<len(st)):
+    					if st[i]=='#':
+    						numres+=1
+    						i+=1
+    					else:
+    						break
+    				if(numres>=6):
+    					for i in range(5):
+    						sto=sto[1:]
+    					while st[0]==' ':
+    						sto=sto[1:]
+    					ed_self.set_text_line(y,' ')
+    					ed_self.set_caret(0,y)
+    					return False
+    				##work here
     	if key==192:
     		if 's' in state:
     			print('stroking')
-    		car = ed_self.get_carets()[0]
-    		if (car[2] != -1) or (car[3] != -1):
-    		    print('caret for stroking is : '+str(car))
-    		    ed_self.insert(car[2],car[3],'~~')
-    		    ed_self.insert(car[0],car[1],'~~')
-    		    return False	
+    			car = ed_self.get_carets()[0]
+    			if (car[2] != -1) or (car[3] != -1):
+    			    print('caret for stroking is : '+str(car))
+    			    if (car[3]>car[1]) or ((car[3]==car[1]) and (car[2]>car[0])):
+    			    	ed_self.insert(car[2],car[3],'~~')
+    			    	ed_self.insert(car[0],car[1],'~~')
+    			    else:
+    			    	ed_self.insert(car[0],car[1],'~~')
+    			    	ed_self.insert(car[2],car[3],'~~')
+    			    return False
+    		else:
+    			car = ed_self.get_carets()[0]
+    			print('quoting')
+    			if (car[3]>car[1]) or ((car[3]==car[1]) and (car[2]>car[0])):
+    				ed_self.insert(car[2],car[3],'`')
+    				ed_self.insert(car[0],car[1],'`')
+    			else:
+    				ed_self.insert(car[0],car[1],'`')
+    				ed_self.insert(car[2],car[3],'`')
+    			return False	
     		print('state '+state)
+    				
     	if key==13:
     		#enter#
     		print('enter pressed' + str(ed_self.get_carets()[0][1]))
@@ -98,6 +174,24 @@ class Command:
     			print(caret)
     			ed_self.set_caret(indent,caret[1]+1)
     			return False
+    		'''if strOld[0]=='#':
+    			print('header detected')
+    			i=0
+    			sline=''
+    			while(i<len(strOld)):
+    				if strOld[i]=='#':
+    					sline+='#'
+    					i+=1
+    				else:
+    					break
+    			car=ed_self.get_carets()[0]
+    			x=car[0]
+    			y=car[1]
+    			ed_self.insert(x,y,'\n'+straddF+sline)
+    			ed_self.set_caret(x,y+1)
+    			return False
+    		else:
+    			print('not a header')'''
     		numArr=['1','2','3','4','5','6','7','8','9','0']
     		if strOld[0] in numArr:
     			print('numbered list?')
@@ -116,20 +210,137 @@ class Command:
     					car = ed_self.get_carets()[0]
     					print('went from line' +str(car[1]))
     					ed_self.insert(car[0],car[1],'\n'+straddF+str(nm+1)+'.')
-    					ed_self.set_caret(i+2+len(str(nm+1)),car[1]+1)
+    					ed_self.set_caret(len(straddF+str(nm+1)+'.'),car[1]+1)
     					return False
     			print('counted num is: '+str(s))
     		else:
     			print('not numbered')
     	
+    	if key==190:
+    		if 's' in state:
+    			print('blockquote')
+    			car=ed_self.get_carets()[0]
+    			print(car)
+    			y1 = car[1]
+    			y2 = car[3]
+    			if y2<y1:
+    				y1, y2 = y2, y1
+    			print('from %s to %s '%(y1, y2))
+    			for i in range(y1, y2+1):
+    				ed_self.insert(0,i,'> ')
+    			return False
+    	if key==32:
+    		car = ed_self.get_carets()[0]
+    		x   = car[0]
+    		y   = car[1]
+    		was = ed_self.get_text_substr(x-1,y,x,y)
+    		now = ed_self.get_text_substr(x,y,x+1,y)
+    		if was in['"',"'","`"]:
+    			if now==was:
+    				ed_self.delete(x,y,x+1,y)
+    		print('w: '+was+' n: '+now)
     	if key==9:
     		#tab#
     		strOldNum=ed_self.get_carets()[0][1]
     		strOld=ed_self.get_text_line(strOldNum)
+    		print(strOld)
+    		if 's' in state:
+    			strOld=strOld=ed_self.get_text_line(strOldNum)
+    			print('unindenting!!'+strOld)
+    			if strOld[0]==' ':
+    				print('was:'+strOld)
+    				strOld=strOld[1:]
+    				strOld=strOld[1:]
+    				print('set:'+strOld)
+    				#print('bullet '+strOld[i])
+    				i=''
+    				while(strOld [0] in [' ','\t']):
+    					i=i+strOld[0]
+    					strOld=strOld[1:]
+    				sym=strOld[0]
+    				print('replacing')
+    				if sym=='-':
+    					sym='+'
+    				elif sym=='+':
+    					sym='*'
+    				elif sym=='*':
+    					sym='-' ''' '''
+    				ed_self.set_text_line(strOldNum,i+sym+strOld)
+    			elif strOld[0]=='\t':
+    				print('tabs')
+    				print('was:'+strOld)
+    				print(strOld)
+    				strOld=strOld[1:]
+    				print('set:'+strOld)
+    				print(strOld)
+    				i=''
+    				while(strOld [0] in [' ','\t']):
+    					i=i+strOld[0]
+    					strOld=strOld[1:]    				
+    				print('bullet '+strOld[0])
+    				sym=strOld[0]
+    				if sym=='-':
+    					sym='+'
+    				elif sym=='+':
+    					sym='*'
+    				elif sym=='*':
+    					sym='-'
+    				ed_self.set_text_line(strOldNum,i+sym+strOld[1:])
+    			i=0
+    			'''while(strOld [i] in [' ','\t']):
+    				i=i+1
+    			print('bullet '+strOld[i])
+    			''''''
+    			if strOld[i]=='-':
+    				strOld[i]='+'
+    			elif strOld[i]=='+':
+    				strOld[i]='*'
+    			elif strOld[i]=='*':
+    				strOld[i]='-'
+    				'''
+    			return False
+    		if(len(strOld)==0):
+    			print('kp 1')
+    			return True
+    		if(strOld[0] in ['-','=']):
+    			print('kp 2')
+    			same=True
+    			for i in strOld:
+    				if not(i == strOld[0]):
+    					same=False
+    			if same:
+    				car = ed_self.get_carets()[0]
+    				x, y = car[0],car[1]
+    				for i in range(len(ed_self.get_text_line(strOldNum)), len(ed_self.get_text_line(strOldNum-1))):
+    					ed_self.insert(x,y,strOld[0])
+    				return False
+    		print('kp 3')
+    		strSyms='1234567890'
+    		print(strOld)
+    		
     		strIndent=''
     		while len(strOld)>0 and (strOld[0]==' ' or strOld[0]=='\t'):
     			strIndent+=strOld[0]
     			strOld=strOld[1:]
+    		print('starting from nums: '+strOld+'!!!')
+    		ed_self.set_text_line(strOldNum,strIndent+'\t1.')
+    		ed_self.set_caret(len(ed_self.get_text_line(strOldNum)),strOldNum)
+    		'''if 's' in state:
+    			car=ed_self.get_carets()[0]
+    			y=car[1]
+    			strOld=ed_self.get_text_line(y)
+    			print(strOld)
+    			wasTick=strOld[-1]
+    			print(wasTick)
+    			if wasTick=='-':
+    				tick='+'
+    			if wasTick=='+':
+    				tick='*'
+    			if wasTick=='*':
+    				tick='-'
+    			strOld[-1]=tick
+    			ed_self.set_text_line(y,strOld)
+    			return False'''####должно работать но нет
     		if strOld[0]=='*':
     			curArr = ed_self.get_carets()[0]
     			print('Writing the -')
@@ -161,12 +372,13 @@ class Command:
     			ed_self.set_text_line(y,strN)
     			ed_self.set_caret(x+1,y)
     		return False
-    		
+    	
     def on_insert(self, ed_self, text):
     	print('inserted '+text)
     	if text in ['"',"'",'#','~']:
     		#print('doubling')
-    		
+    		if text=='#' and not self.needDoublingRes:
+    			return
     		curArr = ed_self.get_carets()[0]
     		y = curArr[1]
     		x = curArr[0]
