@@ -172,7 +172,7 @@ class Command:
     			ed_self.insert(x,y,'\n'+straddF+strOld[0])
     			caret=ed_self.get_carets()[0]
     			print(caret)
-    			ed_self.set_caret(indent,caret[1]+1)
+    			ed_self.set_caret(indent+1,caret[1]+1)
     			return False
     		'''if strOld[0]=='#':
     			print('header detected')
@@ -264,7 +264,7 @@ class Command:
     				elif sym=='+':
     					sym='*'
     				elif sym=='*':
-    					sym='-' ''' '''
+    					sym='-'
     				ed_self.set_text_line(strOldNum,i+sym+strOld)
     			elif strOld[0]=='\t':
     				print('tabs')
@@ -347,10 +347,11 @@ class Command:
     			y = curArr[1]
     			x = curArr[0]
     			ed_self.insert(x,y,"-")
-    			strIndent+='\t'
-    			strN=strIndent+'+'
+    			strIndent+='\t '
+    			print('inserting +' )
+    			strN=strIndent+'+ '
     			ed_self.set_text_line(y,strN)
-    			ed_self.set_caret(x+1,y)
+    			ed_self.set_caret(x,y)
     		if strOld[0]=='+':
     			curArr = ed_self.get_carets()[0]
     			print('Writing the -')
@@ -358,9 +359,9 @@ class Command:
     			x = curArr[0]
     			ed_self.insert(x,y,"-")
     			strIndent+='\t'
-    			strN=strIndent+'-'
+    			strN=strIndent+'- '
     			ed_self.set_text_line(y,strN)
-    			ed_self.set_caret(x+1,y)
+    			ed_self.set_caret(x,y)
     		if strOld[0]=='-':
     			curArr = ed_self.get_carets()[0]
     			print('Writing the -')
@@ -368,14 +369,14 @@ class Command:
     			x = curArr[0]
     			ed_self.insert(x,y,"-")
     			strIndent+='\t'
-    			strN=strIndent+'*'
+    			strN=strIndent+'* '
     			ed_self.set_text_line(y,strN)
-    			ed_self.set_caret(x+1,y)
+    			ed_self.set_caret(x,y)
     		return False
     	
     def on_insert(self, ed_self, text):
     	print('inserted '+text)
-    	if text in ['"',"'",'#','~']:
+    	if text in ['"',"'",'#','~','*','`']:
     		#print('doubling')
     		if text=='#' and not self.needDoublingRes:
     			return
