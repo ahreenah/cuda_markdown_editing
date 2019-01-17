@@ -357,17 +357,7 @@ class Command:
     			strOld[-1]=tick
     			ed_self.set_text_line(y,strOld)
     			return False'''####должно работать но нет
-    		if strOld[0]=='*':
-    			curArr = ed_self.get_carets()[0]
-    			print('Writing the -')
-    			y = curArr[1]
-    			x = curArr[0]
-    			ed_self.insert(x,y,"-")
-    			strIndent+='\t '
-    			print('inserting +' )
-    			strN=strIndent+'+ '
-    			ed_self.set_text_line(y,strN)
-    			ed_self.set_caret(x,y)
+    		
     		if strOld[0]=='+':
     			curArr = ed_self.get_carets()[0]
     			print('Writing the -')
@@ -375,7 +365,19 @@ class Command:
     			x = curArr[0]
     			ed_self.insert(x,y,"-")
     			strIndent+='\t'
+    			print('inserting -')
     			strN=strIndent+'- '
+    			ed_self.set_text_line(y,strN)
+    			ed_self.set_caret(x,y)
+    		if strOld[0]=='*':
+    			curArr = ed_self.get_carets()[0]
+    			print('Writing the -')
+    			y = curArr[1]
+    			x = curArr[0]
+    			ed_self.insert(x,y,"-")
+    			strIndent+='\t'
+    			print('inserting -')
+    			strN=strIndent+'+ '
     			ed_self.set_text_line(y,strN)
     			ed_self.set_caret(x,y)
     		if strOld[0]=='-':
