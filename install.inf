@@ -9,3 +9,16 @@ homepage=https://github.com/medvosa/cuda_markdown_editing
 section=events
 events=on_change,on_key,on_caret,on_insert
 lexers=Markdown
+
+[item6]
+section=commands
+caption=Markdown Editing\Config
+method=config
+menu=o
+
+[item7]
+section=commands
+lexers=Markdown
+caption=Markdown Editing\Fold current caption
+method=toggle_cap
+menu=o

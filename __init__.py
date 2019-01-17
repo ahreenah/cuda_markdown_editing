@@ -46,7 +46,23 @@ class Command:
              b = option_bool,
              )
         msg_box(s, MB_OK)
-
+    def toggle_cap(self):
+    	print('toggling captions')
+    	arr=ed.folding(FOLDING_GET_LIST)
+    	print(str(arr))
+    	strnum=ed.get_carets()[0][1]
+    	print('line number is: '+str(strnum))
+    	i=-1
+    	curn=0
+    	for i in arr:
+    		print('procesing '+str(i)+'...')
+    		if strnum>=i[0] and strnum<=i[1]:
+    			i=curn
+    			print('found!')
+    			break
+    		curn+=1
+    	print(str(i)+' '+str(arr[i][0]))
+    	ed.folding(FOLDING_FOLD, index=i)
     def on_caret(self, ed_self):
     	#print('c')
     	curArr = ed_self.get_carets()[0]
