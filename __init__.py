@@ -179,7 +179,6 @@ class Command:
     		#tab#
     		strOldNum=ed_self.get_carets()[0][1]
     		strOld=ed_self.get_text_line(strOldNum)
-    		print(strOld)
     		if 's' in state:
     			strOld=strOld=ed_self.get_text_line(strOldNum)
     			if strOld[0]==' ':
