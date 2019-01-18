@@ -13,8 +13,14 @@ def str_to_bool(s): return s=='1'
 class Command:
     
     def __init__(self):
-        self.needDoublingRes=False
+        
         self.bullets=ini_read('cuda_markdown_editing.ini','op','list_indent_bullets','*+-')
+        self.match_header_hashes=ini_read('cuda_markdown_editing.ini','op','match_header_hashes','0')
+        if self.match_header_hashes=='1':
+        	self.match_header_hashes=True
+        else:
+        	self.match_header_hashes=False
+        self.needDoublingRes=self.match_header_hashes
         if self.bullets=='':
         	self.bullets='*'
         barr=[]
@@ -66,9 +72,11 @@ class Command:
     						x2+=1
     					else:
     						x1+=1
+    					if x2<x1:
+    						x1,x2=x2,x1
     					if self.needDoublingRes:
-    						ed_self.insert(x2,y2,'#')
-    					ed_self.insert(0,y1,'#')
+    						ed_self.insert(x2-1,y2,'#')
+    					ed_self.insert(0,y2,'#')
     					ln=ed_self.get_text_line(y1)
     					i=0
     					for ch in ln:
@@ -79,9 +87,12 @@ class Command:
     					if i<=6:
     						ed_self.set_sel_rect(i,y1,len(ln),y1)
     					else:
+    						print('error?')
     						while(len(ln)>0):
     							if ln[0]=='#':
     								ln=ln[1:]
+    							elif ln[-1]=='#':
+    								ln=ln[:-1]
     							else:
     								break
     						ed_self.set_text_line(y1,ln)
@@ -90,24 +101,27 @@ class Command:
     				y   = ed_self.get_carets()[0][1]
     				st  = ed_self.get_text_line(y)
     				sto = st
-    				while(st[0] in [' ','\t']):
-    					st=st[1:]
+    				if len(st)>0:
+    					while (len(st)>0)  and (st[0] in [' ','\t','#']):
+    						st=st[1:]
+    					
     				i=0
     				numres=0
+    				st  = ed_self.get_text_line(y)
     				while(i<len(st)):
     					if st[i]=='#':
     						numres+=1
     						i+=1
     					else:
     						break
-    				if(numres>=6):
-    					for i in range(5):
-    						sto=sto[1:]
-    					while st[0]==' ':
-    						sto=sto[1:]
+    				print(numres)
+    				if((numres>=6) and (not self.needDoublingRes)) or (numres>=12):
+    					print('clearing')
     					ed_self.set_text_line(y,' ')
     					ed_self.set_caret(0,y)
     					return False
+    				else:
+    					print('not clearing')
     	if key==192:
     		if 's' in state:
     			car = ed_self.get_carets()[0]
