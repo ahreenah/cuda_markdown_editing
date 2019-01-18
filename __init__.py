@@ -2,7 +2,7 @@
 import os
 from cudatext import *
 
-fn_config = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_MarkdownEditor.ini')
+fn_config = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_markdown_editing.ini')
 
 option_int = 100
 option_bool = True
