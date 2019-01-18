@@ -14,6 +14,14 @@ class Command:
     
     def __init__(self):
         self.needDoublingRes=False
+        self.bullets=ini_read('cuda_markdown_editing.ini','op','list_indent_bullets','*+-')
+        if self.bullets=='':
+        	self.bullets='*'
+        barr=[]
+        for i in self.bullets:
+        	barr.append(i)
+        self.barr=barr
+        print('bullet set '+self.bullets)
         global option_int
         global option_bool
         option_int = int(ini_read(fn_config, 'op', 'option_int', str(option_int)))
@@ -190,12 +198,13 @@ class Command:
     					strOld=strOld[1:]
     				sym=strOld[0]
     				wt=strOld[1:]
-    				if sym=='-':
-    					sym='+'
-    				elif sym=='+':
+    				if sym in self.barr:
+    					j=0
+    					while not (self.barr[j]==sym):
+    						j+=1
+    					sym=self.barr[j-1]
+    				else:
     					sym='*'
-    				elif sym=='*':
-    					sym='-'
     				ed_self.set_text_line(strOldNum,i+sym+strOld+wt)
     			elif strOld[0]=='\t':
     				strOld=strOld[1:]
@@ -204,12 +213,13 @@ class Command:
     					i=i+strOld[0]
     					strOld=strOld[1:]    				
     				sym=strOld[0]
-    				if sym=='-':
-    					sym='+'
-    				elif sym=='+':
-    					sym='*'
-    				elif sym=='*':
-    					sym='-'
+    				if sym in self.barr:
+    					j=0
+    					while not (self.barr[j]==sym):
+    						j+=1
+    					sym=self.barr[j-1]
+    				else:
+    					sym='* '
     				ed_self.set_text_line(strOldNum,i+sym+strOld[1:])
     			i=0
     			return False
@@ -234,16 +244,25 @@ class Command:
     		olt=strOld[2:]
     		ed_self.set_text_line(strOldNum,strIndent+'\t1.'+olt)
     		ed_self.set_caret(len(ed_self.get_text_line(strOldNum)),strOldNum)
-    		if strOld[0]=='+':
+    		#barr=['*','-','+','\\']
+    		def nextb(curb):
+    			i=0
+    			for j in self.barr:
+    				if j==curb:
+    					return self.barr[(i+1)%len(self.barr)]
+    				else:
+    					i+=1
+    			return barr[0]
+    		if strOld[0]in self.barr:
     			curArr = ed_self.get_carets()[0]
     			y = curArr[1]
     			x = curArr[0]
-    			ed_self.insert(x,y,"-")
+    			#ed_self.insert(x,y,"-")
     			strIndent+='\t'
-    			strN=strIndent+'- '+olt
+    			strN=strIndent+nextb(strOld[0])+' '+olt
     			ed_self.set_text_line(y,strN)
     			ed_self.set_caret(x,y)
-    		if strOld[0]=='*':
+    		'''if strOld[0]=='*':
     			curArr = ed_self.get_carets()[0]
     			y = curArr[1]
     			x = curArr[0]
@@ -260,14 +279,12 @@ class Command:
     			strIndent+='\t'
     			strN=strIndent+'* '+olt
     			ed_self.set_text_line(y,strN)
-    			ed_self.set_caret(x,y)
+    			ed_self.set_caret(x,y)'''
     		return False
     	
     def on_insert(self, ed_self, text):
     	if text in ['"',"'",'#','~','*','`']:
     		if text=='#' and not self.needDoublingRes:
     			return
-    		curArr = ed_self.get_carets()[0]
-    		y = curArr[1]
-    		x = curArr[0]
+    		x,y = ed_self.get_carets()[0][:2]
     		ed_self.insert(x,y,text)
