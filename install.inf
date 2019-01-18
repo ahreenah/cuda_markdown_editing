@@ -7,7 +7,7 @@ homepage=https://github.com/medvosa/cuda_markdown_editing
 
 [item1]
 section=events
-events=on_change,on_key,on_caret,on_insert
+events=on_key,on_insert
 lexers=Markdown
 
 [item6]

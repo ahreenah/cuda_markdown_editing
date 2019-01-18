@@ -53,15 +53,6 @@ class Command:
     		curn+=1
     	#print(str(i)+' '+str(arr[i][0]))
     	ed.folding(FOLDING_FOLD, index=i)
-    def on_caret(self, ed_self):
-    	#print('c')
-    	curArr = ed_self.get_carets()[0]
-    	#print(curArr)
-    	y = curArr[1]
-    	x = curArr[0]
-    	pass
-    def on_change(self, ed_self):
-        pass
     def on_key(self, ed_self, key, state):
     	print('k '+str(key))
     	if key==51:
