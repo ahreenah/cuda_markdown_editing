@@ -1,13 +1,3 @@
-a='''
-currently working:
-* lists
-  + bulleted lists
-  + numbered lists
-* doubling next symbols: # , ~ , ' , "
-* strikethrough by clicking Ctrl + ~
-* blockuotes 
-* autocompleting line consiting only of '=' or '-' by pressing tab as it size should be equeal to size of the previous line 
-'''
 
 import os
 from cudatext import *
@@ -179,24 +169,6 @@ class Command:
     			print(caret)
     			ed_self.set_caret(indent+1,caret[1]+1)
     			return False
-    		'''if strOld[0]=='#':
-    			print('header detected')
-    			i=0
-    			sline=''
-    			while(i<len(strOld)):
-    				if strOld[i]=='#':
-    					sline+='#'
-    					i+=1
-    				else:
-    					break
-    			car=ed_self.get_carets()[0]
-    			x=car[0]
-    			y=car[1]
-    			ed_self.insert(x,y,'\n'+straddF+sline)
-    			ed_self.set_caret(x,y+1)
-    			return False
-    		else:
-    			print('not a header')'''
     		numArr=['1','2','3','4','5','6','7','8','9','0']
     		if strOld[0] in numArr:
     			print('numbered list?')
@@ -294,17 +266,6 @@ class Command:
     					sym='-'
     				ed_self.set_text_line(strOldNum,i+sym+strOld[1:])
     			i=0
-    			'''while(strOld [i] in [' ','\t']):
-    				i=i+1
-    			print('bullet '+strOld[i])
-    			''''''
-    			if strOld[i]=='-':
-    				strOld[i]='+'
-    			elif strOld[i]=='+':
-    				strOld[i]='*'
-    			elif strOld[i]=='*':
-    				strOld[i]='-'
-    				'''
     			return False
     		if(len(strOld)==0):
     			print('kp 1')
@@ -333,22 +294,6 @@ class Command:
     		print('starting from nums: '+strOld+'!!!')
     		ed_self.set_text_line(strOldNum,strIndent+'\t1.')
     		ed_self.set_caret(len(ed_self.get_text_line(strOldNum)),strOldNum)
-    		'''if 's' in state:
-    			car=ed_self.get_carets()[0]
-    			y=car[1]
-    			strOld=ed_self.get_text_line(y)
-    			print(strOld)
-    			wasTick=strOld[-1]
-    			print(wasTick)
-    			if wasTick=='-':
-    				tick='+'
-    			if wasTick=='+':
-    				tick='*'
-    			if wasTick=='*':
-    				tick='-'
-    			strOld[-1]=tick
-    			ed_self.set_text_line(y,strOld)
-    			return False'''####должно работать но нет
     		if strOld[0]=='+':
     			curArr = ed_self.get_carets()[0]
     			print('Writing the -')
@@ -395,23 +340,3 @@ class Command:
     		ed_self.insert(x,y,text)
     	else:
     		print('not doubling')
-    	'''
-        *
-        *
-        *
-        *
-        	+
-        	+
-        		-
-        		-
-        		-
-        			*
-        			*
-        #sdf#*
-        ##sdfsve##
-        ###sdferge###
-        ####sdfsrege####
-        
-        ~~asdsf~~
-        ~~poiuytrewq~~
-    	'''
