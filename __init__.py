@@ -56,12 +56,12 @@ class Command:
     	curn=0
     	for i in arr:
     		print('procesing '+str(i)+'...')
-    		if strnum>=i[0] and strnum<=i[1]:
+    		if i[0]<=strnum<=i[1]:
     			i=curn
     			print('found!')
     			break
     		curn+=1
-    	print(str(i)+' '+str(arr[i][0]))
+    	#print(str(i)+' '+str(arr[i][0]))
     	ed.folding(FOLDING_FOLD, index=i)
     def on_caret(self, ed_self):
     	#print('c')
@@ -69,20 +69,10 @@ class Command:
     	#print(curArr)
     	y = curArr[1]
     	x = curArr[0]
-    	#y2 = curArr[3]
-    	#x1, y1, x2, y2 = curArr
-    	#print(ed_self.get_text_line(y))
     	pass
     def on_change(self, ed_self):
         pass
     def on_key(self, ed_self, key, state):
-    	
-    	'''curArr = ed_self.get_carets()[0]
-    	print(curArr)
-    	y1 = curArr[1]
-    	y2 = curArr[3]
-    	#x1, y1, x2, y2 = curArr
-    	print(str(y1)+' '+str(y2))'''
     	print('k '+str(key))
     	if key==51:
     		#reshetka
@@ -101,8 +91,8 @@ class Command:
     					ed_self.insert(0,y1,'#')
     					ln=ed_self.get_text_line(y1)
     					i=0
-    					while(i<len(ln)):
-    						if ln[i]=='#':
+    					for ch in ln:
+    						if ch=='#':
     							i+=1
     						else:
     							break
@@ -139,7 +129,6 @@ class Command:
     					ed_self.set_text_line(y,' ')
     					ed_self.set_caret(0,y)
     					return False
-    				##work here
     	if key==192:
     		if 's' in state:
     			print('stroking')
@@ -273,7 +262,9 @@ class Command:
     				while(strOld [0] in [' ','\t']):
     					i=i+strOld[0]
     					strOld=strOld[1:]
+    				print('wt : '+strOld[1:])
     				sym=strOld[0]
+    				wt=strOld[1:]
     				print('replacing')
     				if sym=='-':
     					sym='+'
@@ -281,7 +272,7 @@ class Command:
     					sym='*'
     				elif sym=='*':
     					sym='-'
-    				ed_self.set_text_line(strOldNum,i+sym+strOld)
+    				ed_self.set_text_line(strOldNum,i+sym+strOld+wt)
     			elif strOld[0]=='\t':
     				print('tabs')
     				print('was:'+strOld)
@@ -338,6 +329,7 @@ class Command:
     		while len(strOld)>0 and (strOld[0]==' ' or strOld[0]=='\t'):
     			strIndent+=strOld[0]
     			strOld=strOld[1:]
+    		olt=strOld[2:]
     		print('starting from nums: '+strOld+'!!!')
     		ed_self.set_text_line(strOldNum,strIndent+'\t1.')
     		ed_self.set_caret(len(ed_self.get_text_line(strOldNum)),strOldNum)
@@ -357,7 +349,6 @@ class Command:
     			strOld[-1]=tick
     			ed_self.set_text_line(y,strOld)
     			return False'''####должно работать но нет
-    		
     		if strOld[0]=='+':
     			curArr = ed_self.get_carets()[0]
     			print('Writing the -')
@@ -366,7 +357,7 @@ class Command:
     			ed_self.insert(x,y,"-")
     			strIndent+='\t'
     			print('inserting -')
-    			strN=strIndent+'- '
+    			strN=strIndent+'- '+olt
     			ed_self.set_text_line(y,strN)
     			ed_self.set_caret(x,y)
     		if strOld[0]=='*':
@@ -377,7 +368,7 @@ class Command:
     			ed_self.insert(x,y,"-")
     			strIndent+='\t'
     			print('inserting -')
-    			strN=strIndent+'+ '
+    			strN=strIndent+'+ '+olt
     			ed_self.set_text_line(y,strN)
     			ed_self.set_caret(x,y)
     		if strOld[0]=='-':
@@ -387,7 +378,7 @@ class Command:
     			x = curArr[0]
     			ed_self.insert(x,y,"-")
     			strIndent+='\t'
-    			strN=strIndent+'* '
+    			strN=strIndent+'* '+olt
     			ed_self.set_text_line(y,strN)
     			ed_self.set_caret(x,y)
     		return False
