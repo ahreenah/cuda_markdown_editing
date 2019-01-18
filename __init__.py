@@ -58,10 +58,9 @@ class Command:
     	if key==51:
     		#reshetka
     		if 's' in state:
-    			cur=ed_self.get_carets()[0]
-    			if not cur[3]==-1:
-    				if not cur[2]==-1:
-    					x1,y1,x2,y2=cur[0],cur[1],cur[2],cur[3]
+    			x1,y1,x2,y2=ed_self.get_carets()[0]
+    			if not y2==-1:
+    				if not x2==-1:
     					if x2>x1:
     						x2+=1
     					else:
@@ -88,8 +87,7 @@ class Command:
     						ed_self.set_text_line(y1,ln)
     					return False
     			else:
-    				car = ed_self.get_carets()[0]
-    				y   = car[1]
+    				y   = ed_self.get_carets()[0][1]
     				st  = ed_self.get_text_line(y)
     				sto = st
     				while(st[0] in [' ','\t']):
