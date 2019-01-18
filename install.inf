@@ -19,6 +19,5 @@ menu=o
 [item7]
 section=commands
 lexers=Markdown
-caption=Markdown Editing\Fold current caption
+caption=Markdown Editing\Fold current section
 method=toggle_cap
-menu=o
