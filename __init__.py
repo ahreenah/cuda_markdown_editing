@@ -60,11 +60,9 @@ class Command:
     def toggle_cap(self):
     	arr=ed.folding(FOLDING_GET_LIST)
     	strnum=ed.get_carets()[0][1]
-    	i=-1
     	curn=0
     	for i in arr:
     		if i[0]<=strnum<=i[1]:
-    			i=curn
     			break
     		curn+=1
     	ed.folding(FOLDING_FOLD, index=curn)
