@@ -176,12 +176,12 @@ class Command:
     			return False
     	if key==32:
     		# space
-    		x,y,x1,y1 = ed_self.get_carets()[0]
-    		was = ed_self.get_text_substr(x-1,y,x,y)
-    		now = ed_self.get_text_substr(x,y,x+1,y)
-    		if was in['"',"'","`"]:
-    			if now==was:
-    				ed_self.delete(x,y,x+1,y)
+    		with ed_self:
+    			x,y,x1,y1 = get_carets()[0]
+    			was = get_text_substr(x-1,y,x,y)
+    			now = get_text_substr(x,y,x+1,y)
+    		if was in['"',"'","`"] and now==was:
+    			ed_self.delete(x,y,x+1,y)
     	if key==9:
     		#tab symbol
     		strOldNum=ed_self.get_carets()[0][1]
