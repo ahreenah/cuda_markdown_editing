@@ -120,26 +120,19 @@ class Command:
     	if key==192:
     		# ~ simbol
     		if 's' in state:
+    			symm='~~'
+    		else:
+    			symm='`'
+    		if True:
     			car = ed_self.get_carets()[0]
     			if (car[2] != -1) or (car[3] != -1):
     			    if (car[3]>car[1]) or ((car[3]==car[1]) and (car[2]>car[0])):
-    			    	ed_self.insert(car[2],car[3],'~~')
-    			    	ed_self.insert(car[0],car[1],'~~')
+    			    	ed_self.insert(car[2],car[3],symm)
+    			    	ed_self.insert(car[0],car[1],symm)
     			    else:
-    			    	ed_self.insert(car[0],car[1],'~~')
-    			    	ed_self.insert(car[2],car[3],'~~')
+    			    	ed_self.insert(car[0],car[1],symm)
+    			    	ed_self.insert(car[2],car[3],symm)
     			    return False
-    		else:
-    			# ` symbol
-    			x1,y1,x2,y2 = ed_self.get_carets()[0]
-    			
-    			if (y2>y1) or ((y2==y1) and (x2>x1)):
-    				ed_self.insert(x2,y2,'`')
-    				ed_self.insert(x1,y1,'`')
-    			else:
-    				ed_self.insert(x1,y1,'`')
-    				ed_self.insert(x2,y2,'`')
-    			return False	
     	if key==13:
     		#enter#
     		strOldNum=ed_self.get_carets()[0][1]
