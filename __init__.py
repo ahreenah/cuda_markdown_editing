@@ -64,8 +64,8 @@ class Command:
     		# hash symnol
     		if 's' in state:
     			x1,y1,x2,y2=ed_self.get_carets()[0]
-    			if not y2==-1:
-    				if not x2==-1:
+    			if y2!=-1:
+    				if x2!=-1:
     					if x2>x1:
     						x2+=1
     					else:
@@ -205,12 +205,12 @@ class Command:
     				ed_self.set_text_line(strOldNum,i+sym+wt)
     			i=0
     			return False
-    		if(len(strOld)==0):
+    		if len(strOld)==0:
     			return True
-    		if(strOld[0] in '-='):
+    		if strOld[0] in '-=' :
     			same=True
     			for i in strOld:
-    				if not(i == strOld[0]):
+    				if not i == strOld[0] :
     					same=False
     			if same:
     				x,y = ed_self.get_carets()[0][:2]
