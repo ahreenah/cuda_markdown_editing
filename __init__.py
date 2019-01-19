@@ -176,11 +176,9 @@ class Command:
     			return False
     	if key==32:
     		# space
-    		with ed_self:
-    			x,y,x1,y1 = get_carets()[0]
-    			was = get_text_substr(x-1,y,x,y)
-    			now = get_text_substr(x,y,x+1,y)
-    		if was in['"',"'","`"] and now==was:
+    		x,y,x1,y1 = ed_self.get_carets()[0]
+    		strt=ed_self.get_text_substr(x-1,y,x,y)
+    		if was in['"',"'","`"] and strt[0]==strt[1]:
     			ed_self.delete(x,y,x+1,y)
     	if key==9:
     		#tab symbol
