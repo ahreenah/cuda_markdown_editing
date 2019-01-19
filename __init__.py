@@ -123,16 +123,15 @@ class Command:
     			symm='~~'
     		else:
     			symm='`'
-    		if True:
-    			car = ed_self.get_carets()[0]
-    			if (car[2] != -1) or (car[3] != -1):
-    			    if (car[3]>car[1]) or ((car[3]==car[1]) and (car[2]>car[0])):
-    			    	ed_self.insert(car[2],car[3],symm)
-    			    	ed_self.insert(car[0],car[1],symm)
-    			    else:
-    			    	ed_self.insert(car[0],car[1],symm)
-    			    	ed_self.insert(car[2],car[3],symm)
-    			    return False
+    		x1,y1,x2,y2 = ed_self.get_carets()[0]
+    		if (x2 != -1) or (y2 != -1):
+    		    if (y2>y1) or ((y2==y1) and (x2>x1)):
+    		    	ed_self.insert(x2,y2,symm)
+    		    	ed_self.insert(x1,y1,symm)
+    		    else:
+    		    	ed_self.insert(x2,y2,symm)
+    		    	ed_self.insert(x1,y1,symm)
+    		    return False
     	if key==13:
     		#enter#
     		strOldNum=ed_self.get_carets()[0][1]
