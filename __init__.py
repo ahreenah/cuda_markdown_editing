@@ -213,8 +213,7 @@ class Command:
     				if not(i == strOld[0]):
     					same=False
     			if same:
-    				car = ed_self.get_carets()[0]
-    				x, y = car[0],car[1]
+    				x,y = ed_self.get_carets()[0][:2]
     				for i in range(len(ed_self.get_text_line(strOldNum)), len(ed_self.get_text_line(strOldNum-1))):
     					ed_self.insert(x,y,strOld[0])
     				return False
@@ -236,10 +235,7 @@ class Command:
     					i+=1
     			return barr[0]
     		if strOld[0]in self.barr:
-    			curArr = ed_self.get_carets()[0]
-    			y = curArr[1]
-    			x = curArr[0]
-    			#ed_self.insert(x,y,"-")
+    			x,y = ed_self.get_carets()[0][:2]
     			strIndent+='\t'
     			strN=strIndent+nextb(strOld[0])+' '+olt
     			ed_self.set_text_line(y,strN)
