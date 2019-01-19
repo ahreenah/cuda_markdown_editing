@@ -11,7 +11,7 @@ list_indent_bullets=*-+
 match_header_hashes=0'''
 def bool_to_str(v): return '1' if v else '0'
 def str_to_bool(s): return s=='1'
-#
+
 class Command:
     
     def __init__(self):
