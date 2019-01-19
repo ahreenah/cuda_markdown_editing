@@ -2,18 +2,25 @@
 import os
 from cudatext import *
 
-fn_config = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_markdown_editing.ini')
+fn_config = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_markdown_editing.ini')#full path to config
 
 option_int = 100
 option_bool = True
-
+default_config_text='''[op]
+list_indent_bullets=*-+
+match_header_hashes=0'''
 def bool_to_str(v): return '1' if v else '0'
 def str_to_bool(s): return s=='1'
 #
 class Command:
     
     def __init__(self):
-        
+        def _config_exists():
+        	return os.path.exists(fn_config)
+        if not _config_exists():
+        	config_file = open(fn_config,'w+')
+        	config_file.write(default_config_text)
+        	config_file.close()
         self.bullets=ini_read('cuda_markdown_editing.ini','op','list_indent_bullets','*+-')
         self.match_header_hashes=ini_read('cuda_markdown_editing.ini','op','match_header_hashes','0')
         if self.match_header_hashes=='1':
@@ -63,7 +70,7 @@ class Command:
     	ed.folding(FOLDING_FOLD, index=i)
     def on_key(self, ed_self, key, state):
     	if key==51:
-    		#reshetka
+    		# hash symnol
     		if 's' in state:
     			x1,y1,x2,y2=ed_self.get_carets()[0]
     			if not y2==-1:
@@ -123,6 +130,7 @@ class Command:
     				else:
     					print('not clearing')
     	if key==192:
+    		# ~ simbol
     		if 's' in state:
     			car = ed_self.get_carets()[0]
     			if (car[2] != -1) or (car[3] != -1):
@@ -134,6 +142,7 @@ class Command:
     			    	ed_self.insert(car[2],car[3],'~~')
     			    return False
     		else:
+    			# ` symbol
     			car = ed_self.get_carets()[0]
     			if (car[3]>car[1]) or ((car[3]==car[1]) and (car[2]>car[0])):
     				ed_self.insert(car[2],car[3],'`')
@@ -179,6 +188,7 @@ class Command:
     					ed_self.set_caret(len(straddF+str(nm+1)+'.'),car[1]+1)
     					return False
     	if key==190:
+    		# > symbol
     		if 's' in state:
     			car=ed_self.get_carets()[0]
     			y1 = car[1]
@@ -189,6 +199,7 @@ class Command:
     				ed_self.insert(0,i,'> ')
     			return False
     	if key==32:
+    		# space
     		car = ed_self.get_carets()[0]
     		x   = car[0]
     		y   = car[1]
@@ -198,7 +209,7 @@ class Command:
     			if now==was:
     				ed_self.delete(x,y,x+1,y)
     	if key==9:
-    		#tab#
+    		#tab symbol
     		strOldNum=ed_self.get_carets()[0][1]
     		strOld=ed_self.get_text_line(strOldNum)
     		if 's' in state:
