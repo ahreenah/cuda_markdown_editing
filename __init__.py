@@ -24,8 +24,7 @@ class Command:
         for i in self.bullets:
         	barr.append(i)
         self.barr=barr
-        global option_int
-        global option_bool
+        global option_int, option_bool
         option_int = int(ini_read(fn_config, 'op', 'option_int', str(option_int)))
         option_bool = str_to_bool(ini_read(fn_config, 'op', 'option_bool', bool_to_str(option_bool)))
 
