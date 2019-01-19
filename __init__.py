@@ -64,8 +64,7 @@ class Command:
     		# hash symnol
     		if 's' in state:
     			x1,y1,x2,y2=ed_self.get_carets()[0]
-    			if y2!=-1:
-    				if x2!=-1:
+    			if y2!=-1 and  x2!=-1:
     					if x2>x1:
     						x2+=1
     					else:
