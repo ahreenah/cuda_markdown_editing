@@ -144,10 +144,9 @@ class Command:
     		if not strOld:
     			return True
     		if strOld[0] in ['*','+','-']:
-    			x,y,t,p = ed_self.get_carets()[0]
+    			x,y = ed_self.get_carets()[0][:2]
     			ed_self.insert(x,y,'\n'+straddF+strOld[0])
-    			caret=ed_self.get_carets()[0]
-    			ed_self.set_caret(indent+1,caret[1]+1)
+    			ed_self.set_caret(indent+1,ed_self.get_carets()[0][1]+1)
     			return False
     		numArr=['1','2','3','4','5','6','7','8','9','0']
     		if strOld[0] in numArr:
@@ -208,7 +207,7 @@ class Command:
     			return False
     		if(len(strOld)==0):
     			return True
-    		if(strOld[0] in ['-','=']):
+    		if(strOld[0] in '-='):
     			same=True
     			for i in strOld:
     				if not(i == strOld[0]):
