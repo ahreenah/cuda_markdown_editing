@@ -51,6 +51,7 @@ class Command:
              cnt = ed.get_line_count()
              )
         msg_box(s, MB_OK)
+        
     def toggle_cap(self):
     	strnum=ed.get_carets()[0][1]
     	curn=0
@@ -59,6 +60,7 @@ class Command:
     			break
     		curn+=1
     	ed.folding(FOLDING_FOLD, index=curn)
+    	
     def on_key(self, ed_self, key, state):
     	if key==51:
     		# hash symnol
@@ -260,24 +262,6 @@ class Command:
     			strN=strIndent+nextb(strOld[0])+' '+olt
     			ed_self.set_text_line(y,strN)
     			ed_self.set_caret(x,y)
-    		'''if strOld[0]=='*':
-    			curArr = ed_self.get_carets()[0]
-    			y = curArr[1]
-    			x = curArr[0]
-    			ed_self.insert(x,y,"-")
-    			strIndent+='\t'
-    			strN=strIndent+'+ '+olt
-    			ed_self.set_text_line(y,strN)
-    			ed_self.set_caret(x,y)
-    		if strOld[0]=='-':
-    			curArr = ed_self.get_carets()[0]
-    			y = curArr[1]
-    			x = curArr[0]
-    			ed_self.insert(x,y,"-")
-    			strIndent+='\t'
-    			strN=strIndent+'* '+olt
-    			ed_self.set_text_line(y,strN)
-    			ed_self.set_caret(x,y)'''
     		return False
     	
     def on_insert(self, ed_self, text):
