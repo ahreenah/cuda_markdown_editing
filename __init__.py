@@ -236,8 +236,7 @@ class Command:
     			return barr[0]
     		if strOld[0]in self.barr:
     			x,y = ed_self.get_carets()[0][:2]
-    			strN=strIndent+'\t'+nextb(strOld[0])+' '+olt
-    			ed_self.set_text_line(y,strN)
+    			ed_self.set_text_line(y,strIndent+'\t'+nextb(strOld[0])+' '+olt)
     			ed_self.set_caret(x,y)
     		return False
     	
