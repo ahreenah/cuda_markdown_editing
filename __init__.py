@@ -162,9 +162,7 @@ class Command:
     		if not strOld:
     			return True
     		if strOld[0] in ['*','+','-']:
-    			curArr = ed_self.get_carets()[0]
-    			y = curArr[1]
-    			x = curArr[0]
+    			x,y,t,p = ed_self.get_carets()[0]
     			ed_self.insert(x,y,'\n'+straddF+strOld[0])
     			caret=ed_self.get_carets()[0]
     			ed_self.set_caret(indent+1,caret[1]+1)
