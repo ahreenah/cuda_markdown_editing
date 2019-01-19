@@ -15,15 +15,8 @@ def str_to_bool(s): return s=='1'
 class Command:
     
     def __init__(self):
-        def _config_exists():
-        	return os.path.exists(fn_config)
-        if not _config_exists():
-        	config_file = open(fn_config,'w+')
-        	config_file.write(default_config_text)
-        	config_file.close()
         self.bullets=ini_read('cuda_markdown_editing.ini','op','list_indent_bullets','*+-')
-        self.match_header_hashes=ini_read('cuda_markdown_editing.ini','op','match_header_hashes','0')
-        self.match_header_hashes=self.match_header_hashes=='1'
+        self.match_header_hashes=str_to_bool(ini_read('cuda_markdown_editing.ini','op','match_header_hashes','0'))
         self.needDoublingRes=self.match_header_hashes
         if self.bullets=='':
         	self.bullets='*'
@@ -37,10 +30,15 @@ class Command:
         option_bool = str_to_bool(ini_read(fn_config, 'op', 'option_bool', bool_to_str(option_bool)))
 
     def config(self):
-
-        ini_write(fn_config, 'op', 'option_int', str(option_int))
-        ini_write(fn_config, 'op', 'option_bool', bool_to_str(option_bool))
-        file_open(fn_config)
+    	def _config_exists():
+        	return os.path.exists(fn_config)
+    	if not _config_exists():
+        	config_file = open(fn_config,'w+')
+        	config_file.write(default_config_text)
+        	config_file.close()
+    	ini_write(fn_config, 'op', 'option_int', str(option_int))
+    	ini_write(fn_config, 'op', 'option_bool', bool_to_str(option_bool))
+    	file_open(fn_config)
         
     def run(self):
         s = '''
