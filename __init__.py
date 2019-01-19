@@ -58,10 +58,9 @@ class Command:
              )
         msg_box(s, MB_OK)
     def toggle_cap(self):
-    	arr=ed.folding(FOLDING_GET_LIST)
     	strnum=ed.get_carets()[0][1]
     	curn=0
-    	for i in arr:
+    	for i in ed.folding(FOLDING_GET_LIST):
     		if i[0]<=strnum<=i[1]:
     			break
     		curn+=1
