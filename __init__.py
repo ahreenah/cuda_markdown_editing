@@ -134,8 +134,7 @@ class Command:
     		    return False
     	if key==13:
     		#enter#
-    		strOldNum=ed_self.get_carets()[0][1]
-    		strOld=ed_self.get_text_line(strOldNum)
+    		strOld=ed_self.get_text_line(ed_self.get_carets()[0][1])
     		straddF=''
     		indent=1
     		while len(strOld)>0 and (strOld[0]==' ' or strOld[0]=='\t'):
@@ -192,7 +191,7 @@ class Command:
     		strOldNum=ed_self.get_carets()[0][1]
     		strOld=ed_self.get_text_line(strOldNum)
     		if 's' in state:
-    			strOld=strOld=ed_self.get_text_line(strOldNum)
+    			#strOld=strOld=ed_self.get_text_line(strOldNum)
     			if strOld[0]==' ' or strOld[0]=='\t':
     				if strOld[0]==' ':
     					strOld=strOld[1:]
