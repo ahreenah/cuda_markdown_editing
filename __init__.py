@@ -168,9 +168,7 @@ class Command:
     	if key==190:
     		# > symbol
     		if 's' in state:
-    			car=ed_self.get_carets()[0]
-    			y1 = car[1]
-    			y2 = car[3]
+    			x1,y1,x2,y2=ed_self.get_carets()[0]
     			if y2<y1:
     				y1, y2 = y2, y1
     			for i in range(y1, y2+1):
@@ -178,9 +176,7 @@ class Command:
     			return False
     	if key==32:
     		# space
-    		car = ed_self.get_carets()[0]
-    		x   = car[0]
-    		y   = car[1]
+    		x,y,x1,y1 = ed_self.get_carets()[0]
     		was = ed_self.get_text_substr(x-1,y,x,y)
     		now = ed_self.get_text_substr(x,y,x+1,y)
     		if was in['"',"'","`"]:
