@@ -67,7 +67,7 @@ class Command:
     			i=curn
     			break
     		curn+=1
-    	ed.folding(FOLDING_FOLD, index=i)
+    	ed.folding(FOLDING_FOLD, index=curn)
     def on_key(self, ed_self, key, state):
     	if key==51:
     		# hash symnol
@@ -143,13 +143,14 @@ class Command:
     			    return False
     		else:
     			# ` symbol
-    			car = ed_self.get_carets()[0]
-    			if (car[3]>car[1]) or ((car[3]==car[1]) and (car[2]>car[0])):
-    				ed_self.insert(car[2],car[3],'`')
-    				ed_self.insert(car[0],car[1],'`')
+    			x1,y1,x2,y2 = ed_self.get_carets()[0]
+    			
+    			if (y2>y1) or ((y2==y1) and (x2>x1)):
+    				ed_self.insert(x2,y2,'`')
+    				ed_self.insert(x1,y1,'`')
     			else:
-    				ed_self.insert(car[0],car[1],'`')
-    				ed_self.insert(car[2],car[3],'`')
+    				ed_self.insert(x1,y1,'`')
+    				ed_self.insert(x2,y2,'`')
     			return False	
     	if key==13:
     		#enter#
