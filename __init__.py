@@ -190,14 +190,14 @@ class Command:
     					strOld=strOld[1:]
     				strOld=strOld[1:]
     				i=''
-    				while(strOld [0] in [' ','\t']):
+    				while strOld [0] in [' ','\t']:
     					i=i+strOld[0]
     					strOld=strOld[1:]
     				sym=strOld[0]
     				wt=strOld[1:]
     				if sym in self.barr:
     					j=0
-    					while not (self.barr[j]==sym):
+    					while self.barr[j]!=sym:
     						j+=1
     					sym=self.barr[j-1]
     				else:
