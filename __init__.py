@@ -23,10 +23,7 @@ class Command:
         	config_file.close()
         self.bullets=ini_read('cuda_markdown_editing.ini','op','list_indent_bullets','*+-')
         self.match_header_hashes=ini_read('cuda_markdown_editing.ini','op','match_header_hashes','0')
-        if self.match_header_hashes=='1':
-        	self.match_header_hashes=True
-        else:
-        	self.match_header_hashes=False
+        self.match_header_hashes=self.match_header_hashes=='1'
         self.needDoublingRes=self.match_header_hashes
         if self.bullets=='':
         	self.bullets='*'
@@ -34,7 +31,6 @@ class Command:
         for i in self.bullets:
         	barr.append(i)
         self.barr=barr
-        print('bullet set '+self.bullets)
         global option_int
         global option_bool
         option_int = int(ini_read(fn_config, 'op', 'option_int', str(option_int)))
@@ -52,9 +48,7 @@ class Command:
         option_int: {i}
         option_bool: {b}
         '''.format(
-             cnt = ed.get_line_count(),
-             i = option_int,
-             b = option_bool,
+             cnt = ed.get_line_count()
              )
         msg_box(s, MB_OK)
     def toggle_cap(self):
@@ -91,7 +85,6 @@ class Command:
     					if i<=6:
     						ed_self.set_sel_rect(i,y1,len(ln),y1)
     					else:
-    						print('error?')
     						while(len(ln)>0):
     							if ln[0]=='#':
     								ln=ln[1:]
@@ -118,14 +111,12 @@ class Command:
     						i+=1
     					else:
     						break
-    				print(numres)
     				if((numres>=6) and (not self.needDoublingRes)) or (numres>=12):
-    					print('clearing')
     					ed_self.set_text_line(y,' ')
     					ed_self.set_caret(0,y)
     					return False
     				else:
-    					print('not clearing')
+    					pass
     	if key==192:
     		# ~ simbol
     		if 's' in state:
@@ -210,8 +201,9 @@ class Command:
     		strOld=ed_self.get_text_line(strOldNum)
     		if 's' in state:
     			strOld=strOld=ed_self.get_text_line(strOldNum)
-    			if strOld[0]==' ':
-    				strOld=strOld[1:]
+    			if strOld[0]==' ' or strOld[0]=='\t':
+    				if strOld[0]==' ':
+    					strOld=strOld[1:]
     				strOld=strOld[1:]
     				i=''
     				while(strOld [0] in [' ','\t']):
@@ -225,23 +217,8 @@ class Command:
     						j+=1
     					sym=self.barr[j-1]
     				else:
-    					sym='*'
-    				ed_self.set_text_line(strOldNum,i+sym+strOld+wt)
-    			elif strOld[0]=='\t':
-    				strOld=strOld[1:]
-    				i=''
-    				while(strOld [0] in [' ','\t']):
-    					i=i+strOld[0]
-    					strOld=strOld[1:]    				
-    				sym=strOld[0]
-    				if sym in self.barr:
-    					j=0
-    					while not (self.barr[j]==sym):
-    						j+=1
-    					sym=self.barr[j-1]
-    				else:
     					sym='* '
-    				ed_self.set_text_line(strOldNum,i+sym+strOld[1:])
+    				ed_self.set_text_line(strOldNum,i+sym+wt)
     			i=0
     			return False
     		if(len(strOld)==0):
