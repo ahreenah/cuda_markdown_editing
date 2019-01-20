@@ -107,7 +107,7 @@ class Command:
     				else:
     					pass
     	if key==192:
-    		# ~  simbol
+    		# ~   simbol
     		if 's' in state:
     			symm='~~'
     		else:
