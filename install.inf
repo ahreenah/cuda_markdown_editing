@@ -15,9 +15,3 @@ section=commands
 caption=Markdown Editing\Config
 method=config
 menu=o
-
-[item7]
-section=commands
-lexers=Markdown
-caption=Markdown Editing\Fold current section
-method=toggle_cap

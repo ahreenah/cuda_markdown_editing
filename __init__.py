@@ -48,15 +48,6 @@ class Command:
              cnt = ed.get_line_count()
              )
         msg_box(s, MB_OK)
-        
-    def toggle_cap(self):
-    	strnum=ed.get_carets()[0][1]
-    	curn=0
-    	for i in ed.folding(FOLDING_GET_LIST):
-    		if i[0]<=strnum<=i[1]:
-    			break
-    		curn+=1
-    	ed.folding(FOLDING_FOLD, index=curn)
     	
     def on_key(self, ed_self, key, state):
     	if key==51:
@@ -122,13 +113,15 @@ class Command:
     		else:
     			symm='`'
     		x1,y1,x2,y2 = ed_self.get_carets()[0]
+    		if x2<x1:
+    			x2,x1=x1,x2
     		if (x2 != -1) or (y2 != -1):
     		    if (y2>y1) or ((y2==y1) and (x2>x1)):
     		    	ed_self.insert(x2,y2,symm)
     		    	ed_self.insert(x1,y1,symm)
     		    else:
     		    	ed_self.insert(x2,y2,symm)
-    		    	ed_self.insert(x1,y1,symm)
+    		    	ed_self.insert(x1,y1,symm)	
     		    return False
     	if key==13:
     		#enter#
@@ -237,9 +230,23 @@ class Command:
     			ed_self.set_text_line(y,strIndent+'\t'+nextb(strOld[0])+' '+olt)
     			ed_self.set_caret(x,y)
     		return False
-    	
+    	elif key==56:
+    		if 's' in state:
+    			print(ed_self.get_carets()[0])
+    			x1,y1,x2,y2=ed_self.get_carets()[0]
+    			if x2<x1:
+    				x1,x2=x2,x1
+    			if x2==-1 and y2==-1:
+    				return True
+    				
+    			print('inserting... %s %s %s %s'%(x1,y1,x2,y2))
+    			ed_self.insert(x2,y2,'*')
+    			ed_self.insert(x1,y1,'*')
+    			ed_self.set_sel_rect(x1+1,y1,x2+1,y2)
+    			return False
     def on_insert(self, ed_self, text):
-    	if text in ['"',"'",'#','~','*','`']:
+    	if text in ['"',"'",'#',
+    	'~','*','`']:
     		if text=='#' and not self.needDoublingRes:
     			return
     		x,y = ed_self.get_carets()[0][:2]
