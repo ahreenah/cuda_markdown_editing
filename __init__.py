@@ -113,7 +113,7 @@ class Command:
     		else:
     			symm='`'
     		x1,y1,x2,y2 = ed_self.get_carets()[0]
-    		if x2<x1:
+    		if x2<x1 and  x2!=-1:
     			x2,x1=x1,x2
     		if (x2 != -1) or (y2 != -1):
     		    if (y2>y1) or ((y2==y1) and (x2>x1)):
@@ -167,8 +167,10 @@ class Command:
     	if key==32:
     		# space
     		x,y,x1,y1 = ed_self.get_carets()[0]
-    		strt=ed_self.get_text_substr(x-1,y,x,y)
-    		if was in['"',"'","`"] and strt[0]==strt[1]:
+    		if x==0:
+    			return
+    		strt=ed_self.get_text_substr(x-1,y,x+1,y)
+    		if strt[0] in['"',"'","`"] and strt[0]==strt[1]:
     			ed_self.delete(x,y,x+1,y)
     	if key==9:
     		#tab symbol
@@ -185,6 +187,11 @@ class Command:
     					i=i+strOld[0]
     					strOld=strOld[1:]
     				sym=strOld[0]
+    				if len(strOld)>0:
+    					while strOld[0] in '0123456789':
+    						strOld=strOld[1:]
+    						if len(strOld)==0:
+    							break
     				wt=strOld[1:]
     				if sym in self.barr:
     					j=0
@@ -208,13 +215,19 @@ class Command:
     				for i in range(len(ed_self.get_text_line(strOldNum)), len(ed_self.get_text_line(strOldNum-1))):
     					ed_self.insert(x,y,strOld[0])
     				return False
-    		strSyms='1234567890'
+    		strSyms='1234567890.'
     		strIndent=''
     		while len(strOld)>0 and (strOld[0]==' ' or strOld[0]=='\t'):
     			strIndent+=strOld[0]
     			strOld=strOld[1:]
-    		olt=strOld[2:]
-    		ed_self.set_text_line(strOldNum,strIndent+'\t1.'+olt)
+    		isNumbered=False
+    		while strOld[0] in strSyms:
+    			isNumbered=True
+    			strOld=strOld[2:]
+    			if len(strOld)==0:
+    				break
+    		if isNumbered:
+    			ed_self.set_text_line(strOldNum,strIndent+'\t1.'+strOld)
     		ed_self.set_caret(len(ed_self.get_text_line(strOldNum)),strOldNum)
     		#barr=['*','-','+','\\']
     		def nextb(curb):
@@ -225,10 +238,11 @@ class Command:
     				else:
     					i+=1
     			return barr[0]
+    		if len(strOld)==0:return
     		if strOld[0]in self.barr:
     			x,y = ed_self.get_carets()[0][:2]
-    			ed_self.set_text_line(y,strIndent+'\t'+nextb(strOld[0])+' '+olt)
-    			ed_self.set_caret(x,y)
+    			ed_self.set_text_line(y,strIndent+'\t'+nextb(strOld[0])+' '+strOld[2:])
+    			ed_self.set_caret(x+1,y)
     		return False
     	elif key==56:
     		if 's' in state:
