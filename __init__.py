@@ -211,20 +211,19 @@ class Command:
     		if len(strOld)==0:
     			return True
     		if strOld[0] in '-=' :
-    			if len (strOld)<1:
-    				return True
-    			print('lining')
-    			same=True
-    			for i in strOld:
-    				if not i in [' ','\t','-','='] :
-    					same=False
-    			if same:
-    				strOld=strOld[:1]
-    				x,y = ed_self.get_carets()[0][:2]
-    				for i in range(len(ed_self.get_text_line(strOldNum)), len(ed_self.get_text_line(strOldNum-1))):
-    					strOld+=strOld[0]
-    				ed_self.set_text_line(y,strOld)
-    				return False
+    			if not len(strOld)>=2:
+    				print('lining')
+    				same=True
+    				for i in strOld:
+    					if not i in [' ','\t','-','='] :
+    						same=False
+    				if same:
+    					strOld=strOld[:1]
+    					x,y = ed_self.get_carets()[0][:2]
+    					for i in range(len(ed_self.get_text_line(strOldNum)), len(ed_self.get_text_line(strOldNum-1))):
+    						strOld+=strOld[0]
+    					ed_self.set_text_line(y,strOld)
+    					return False
     		strSyms='1234567890.'
     		strIndent=''
     		while len(strOld)>0 and (strOld[0]==' ' or strOld[0]=='\t'):
