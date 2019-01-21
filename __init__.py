@@ -134,7 +134,11 @@ class Command:
     			indent+=1
     		if not strOld:
     			return True
-    		if strOld[0] in ['*','+','-']:
+    		if strOld[0] in self.bullets:
+    			if len(strOld)==1 and strOld[0]=='-':
+    				return True
+    			if strOld[0]=='-' and not strOld[1]==' ':
+    				return True
     			x,y = ed_self.get_carets()[0][:2]
     			ed_self.insert(x,y,'\n'+straddF+strOld[0])
     			ed_self.set_caret(indent+1,ed_self.get_carets()[0][1]+1)
@@ -201,19 +205,25 @@ class Command:
     				else:
     					sym='* '
     				ed_self.set_text_line(strOldNum,i+sym+wt)
+    				ed_self.set_caret(len(i)+2, strOldNum)
     			i=0
     			return False
     		if len(strOld)==0:
     			return True
     		if strOld[0] in '-=' :
+    			if len (strOld)<1:
+    				return True
+    			print('lining')
     			same=True
     			for i in strOld:
-    				if not i == strOld[0] :
+    				if not i in [' ','\t','-','='] :
     					same=False
     			if same:
+    				strOld=strOld[:1]
     				x,y = ed_self.get_carets()[0][:2]
     				for i in range(len(ed_self.get_text_line(strOldNum)), len(ed_self.get_text_line(strOldNum-1))):
-    					ed_self.insert(x,y,strOld[0])
+    					strOld+=strOld[0]
+    				ed_self.set_text_line(y,strOld)
     				return False
     		strSyms='1234567890.'
     		strIndent=''
@@ -242,7 +252,7 @@ class Command:
     		if strOld[0]in self.barr:
     			x,y = ed_self.get_carets()[0][:2]
     			ed_self.set_text_line(y,strIndent+'\t'+nextb(strOld[0])+' '+strOld[2:])
-    			ed_self.set_caret(x+1,y)
+    			ed_self.set_caret(x+2,y)
     		return False
     	elif key==56:
     		if 's' in state:
