@@ -4,8 +4,6 @@ from cudatext import *
 
 fn_config = os.path.join(app_path(APP_DIR_SETTINGS), 'cuda_markdown_editing.ini')#full path to config
 
-option_int = 100
-option_bool = True
 default_config_text='''[op]
 list_indent_bullets=*-+
 match_header_hashes=0'''
@@ -24,9 +22,6 @@ class Command:
         for i in self.bullets:
         	barr.append(i)
         self.barr=barr
-        global option_int, option_bool
-        option_int = int(ini_read(fn_config, 'op', 'option_int', str(option_int)))
-        option_bool = str_to_bool(ini_read(fn_config, 'op', 'option_bool', bool_to_str(option_bool)))
 
     def config(self):
     	def _config_exists():
@@ -35,15 +30,11 @@ class Command:
         	config_file = open(fn_config,'w+')
         	config_file.write(default_config_text)
         	config_file.close()
-    	ini_write(fn_config, 'op', 'option_int', str(option_int))
-    	ini_write(fn_config, 'op', 'option_bool', bool_to_str(option_bool))
     	file_open(fn_config)
         
     def run(self):
         s = '''
         file lines count: {cnt}
-        option_int: {i}
-        option_bool: {b}
         '''.format(
              cnt = ed.get_line_count()
              )
@@ -82,6 +73,7 @@ class Command:
     							else:
     								break
     						ed_self.set_text_line(y1,ln)
+    						ed_self.set_sel_rect(0,y1,len(ln),y1)
     					return False
     			else:
     				y   = ed_self.get_carets()[0][1]
@@ -118,10 +110,14 @@ class Command:
     		if (x2 != -1) or (y2 != -1):
     		    if (y2>y1) or ((y2==y1) and (x2>x1)):
     		    	ed_self.insert(x2,y2,symm)
-    		    	ed_self.insert(x1,y1,symm)
+    		    	ed_self.insert(x1,y1,symm)	
     		    else:
     		    	ed_self.insert(x2,y2,symm)
-    		    	ed_self.insert(x1,y1,symm)	
+    		    	ed_self.insert(x1,y1,symm)
+    		    if symm=='`':
+    		    	ed_self.set_sel_rect(x1+1,y1, x2+1,y2)
+    		    else:
+    		    	ed_self.set_sel_rect(x1+2,y1, x2+2,y2)
     		    return False
     	if key==13:
     		#enter#
@@ -139,8 +135,21 @@ class Command:
     				return True
     			if strOld[0]=='-' and not strOld[1]==' ':
     				return True
+    			if strOld[0]=='*':
+    				if '*' in strOld[1:]:
+    					return True
     			x,y = ed_self.get_carets()[0][:2]
-    			ed_self.insert(x,y,'\n'+straddF+strOld[0])
+    			empty=True
+    			for i in strOld:
+    				if not i in [' ','\t']:
+    					if not i in self.bullets:
+    						empty=False
+    			if empty:
+    				ed_self.set_text_line(y,' '*x)
+    				ed_self.set_caret(x,y)
+    				return False
+    			x,y = ed_self.get_carets()[0][:2]
+    			ed_self.insert(x,y,'\n'+straddF+strOld[0]+' ')
     			ed_self.set_caret(indent+1,ed_self.get_carets()[0][1]+1)
     			return False
     		numArr=['1','2','3','4','5','6','7','8','9','0']
@@ -174,6 +183,10 @@ class Command:
     		if x==0:
     			return
     		strt=ed_self.get_text_substr(x-1,y,x+1,y)
+    		if len(strt)<2:
+    			return True
+    		if strt[0]=='*' and strt[1]=='*':
+    			ed_self.delete(x,y,x+1,y)
     		if strt[0] in['"',"'","`"] and strt[0]==strt[1]:
     			ed_self.delete(x,y,x+1,y)
     	if key==9:
@@ -212,7 +225,6 @@ class Command:
     			return True
     		if strOld[0] in '-=' :
     			if not len(strOld)>=2:
-    				print('lining')
     				same=True
     				for i in strOld:
     					if not i in [' ','\t','-','='] :
@@ -223,6 +235,7 @@ class Command:
     					for i in range(len(ed_self.get_text_line(strOldNum)), len(ed_self.get_text_line(strOldNum-1))):
     						strOld+=strOld[0]
     					ed_self.set_text_line(y,strOld)
+    					ed_self.set_caret(len(strOld),y)
     					return False
     		strSyms='1234567890.'
     		strIndent=''
@@ -249,20 +262,28 @@ class Command:
     			return barr[0]
     		if len(strOld)==0:return
     		if strOld[0]in self.barr:
+    			if strOld[0]=='*':
+    				x,y=ed_self.get_carets()[0][:2]
+    				strt=ed_self.get_text_line(y)
+    				while(strt[0] in [' ','\t']):
+    					strt=strt[1:]
+    				strt=strt[1:]
+    				if '*' in strt:
+    					return False
+    				else:
+    					ed_self.insert(0,y,'\t')
     			x,y = ed_self.get_carets()[0][:2]
     			ed_self.set_text_line(y,strIndent+'\t'+nextb(strOld[0])+' '+strOld[2:])
-    			ed_self.set_caret(x+2,y)
+    			ed_self.set_caret(x+1,y)
     		return False
     	elif key==56:
     		if 's' in state:
-    			print(ed_self.get_carets()[0])
     			x1,y1,x2,y2=ed_self.get_carets()[0]
     			if x2<x1:
     				x1,x2=x2,x1
     			if x2==-1 and y2==-1:
     				return True
     				
-    			print('inserting... %s %s %s %s'%(x1,y1,x2,y2))
     			ed_self.insert(x2,y2,'*')
     			ed_self.insert(x1,y1,'*')
     			ed_self.set_sel_rect(x1+1,y1,x2+1,y2)
