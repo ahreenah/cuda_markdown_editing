@@ -122,26 +122,26 @@ class Command:
     		    return False
     	if key==13:
     		#enter#
-    		strOld=ed_self.get_text_line(ed_self.get_carets()[0][1])
-    		straddF=''
+    		str_old=ed_self.get_text_line(ed_self.get_carets()[0][1])
+    		str_add_f=''
     		indent=1
-    		while len(strOld)>0 and (strOld[0]==' ' or strOld[0]=='\t'):
-    			straddF+=strOld[0]
-    			strOld=strOld[1:]
+    		while len(str_old)>0 and (str_old[0]==' ' or str_old[0]=='\t'):
+    			str_add_f+=str_old[0]
+    			str_old=str_old[1:]
     			indent+=1
-    		if not strOld:
+    		if not str_old:
     			return True
-    		if strOld[0] in self.bullets:
-    			if len(strOld)==1 and strOld[0]=='-':
+    		if str_old[0] in self.bullets:
+    			if len(str_old)==1 and str_old[0]=='-':
     				return True
-    			if strOld[0]=='-' and not strOld[1]==' ':
+    			if str_old[0]=='-' and not str_old[1]==' ':
     				return True
-    			if strOld[0]=='*':
-    				if '*' in strOld[1:]:
+    			if str_old[0]=='*':
+    				if '*' in str_old[1:]:
     					return True
     			x,y = ed_self.get_carets()[0][:2]
     			empty=True
-    			for i in strOld:
+    			for i in str_old:
     				if not i in [' ','\t']:
     					if not i in self.bullets:
     						empty=False
@@ -150,24 +150,24 @@ class Command:
     				ed_self.set_caret(x-2,y)
     				return False
     			x,y = ed_self.get_carets()[0][:2]
-    			ed_self.insert(x,y,'\n'+straddF+strOld[0]+' ')
+    			ed_self.insert(x,y,'\n'+str_add_f+str_old[0]+' ')
     			ed_self.set_caret(indent+1,ed_self.get_carets()[0][1]+1)
     			return False
-    		numArr=['1','2','3','4','5','6','7','8','9','0']
-    		if strOld[0] in numArr:
+    		num_arr=['1','2','3','4','5','6','7','8','9','0']
+    		if str_old[0] in num_arr:
     			s=''
     			i=0
-    			ll=len(strOld)
-    			strOld+=' '
-    			while(strOld[i] in numArr) and (i<ll):
-    				s=s+strOld[i]
+    			ll=len(str_old)
+    			str_old+=' '
+    			while(str_old[i] in num_arr) and (i<ll):
+    				s=s+str_old[i]
     				i = i+1
     			if (i<ll):
-    				if(strOld[i]=='.'):
+    				if(str_old[i]=='.'):
     					nm=int(s)
     					car = ed_self.get_carets()[0]
-    					ed_self.insert(car[0],car[1],'\n'+straddF+str(nm+1)+'.')
-    					ed_self.set_caret(len(straddF+str(nm+1)+'.'),car[1]+1)
+    					ed_self.insert(car[0],car[1],'\n'+str_add_f+str(nm+1)+'.')
+    					ed_self.set_caret(len(str_add_f+str(nm+1)+'.'),car[1]+1)
     					return False
     	if key==190:
     		# > symbol
@@ -192,25 +192,25 @@ class Command:
     			ed_self.delete(x,y,x+1,y)
     	if key==9:
     		#tab symbol
-    		strOldNum=ed_self.get_carets()[0][1]
-    		strOld=ed_self.get_text_line(strOldNum)
+    		str_oldNum=ed_self.get_carets()[0][1]
+    		str_old=ed_self.get_text_line(str_oldNum)
     		if 's' in state:
-    			#strOld=strOld=ed_self.get_text_line(strOldNum)
-    			if strOld[0]==' ' or strOld[0]=='\t':
-    				if strOld[0]==' ':
-    					strOld=strOld[1:]
-    				strOld=strOld[1:]
+    			#str_old=str_old=ed_self.get_text_line(str_oldNum)
+    			if str_old[0]==' ' or str_old[0]=='\t':
+    				if str_old[0]==' ':
+    					str_old=str_old[1:]
+    				str_old=str_old[1:]
     				i=''
-    				while strOld [0] in [' ','\t']:
-    					i=i+strOld[0]
-    					strOld=strOld[1:]
-    				sym=strOld[0]
-    				if len(strOld)>0:
-    					while strOld[0] in '0123456789':
-    						strOld=strOld[1:]
-    						if len(strOld)==0:
+    				while str_old [0] in [' ','\t']:
+    					i=i+str_old[0]
+    					str_old=str_old[1:]
+    				sym=str_old[0]
+    				if len(str_old)>0:
+    					while str_old[0] in '0123456789':
+    						str_old=str_old[1:]
+    						if len(str_old)==0:
     							break
-    				wt=strOld[1:]
+    				wt=str_old[1:]
     				if sym in self.barr:
     					j=0
     					while self.barr[j]!=sym:
@@ -218,41 +218,41 @@ class Command:
     					sym=self.barr[j-1]
     				else:
     					sym='* '
-    				ed_self.set_text_line(strOldNum,i+sym+wt)
-    				ed_self.set_caret(len(i)+2, strOldNum)
+    				ed_self.set_text_line(str_oldNum,i+sym+wt)
+    				ed_self.set_caret(len(i)+2, str_oldNum)
     			i=0
     			return False
-    		if len(strOld)==0:
+    		if len(str_old)==0:
     			return True
-    		if strOld[0] in '-=' :
-    			if not len(strOld)>=2:
+    		if str_old[0] in '-=' :
+    			if not len(str_old)>=2:
     				same=True
-    				for i in strOld:
+    				for i in str_old:
     					if not i in [' ','\t','-','='] :
     						same=False
     				if same:
-    					strOld=strOld[:1]
+    					str_old=str_old[:1]
     					x,y = ed_self.get_carets()[0][:2]
-    					for i in range(len(ed_self.get_text_line(strOldNum)), len(ed_self.get_text_line(strOldNum-1))):
-    						strOld+=strOld[0]
-    					ed_self.set_text_line(y,strOld)
-    					ed_self.set_caret(len(strOld),y)
+    					for i in range(len(ed_self.get_text_line(str_oldNum)), len(ed_self.get_text_line(str_oldNum-1))):
+    						str_old+=str_old[0]
+    					ed_self.set_text_line(y,str_old)
+    					ed_self.set_caret(len(str_old),y)
     					return False
-    		strSyms='1234567890.'
-    		strIndent=''
-    		while len(strOld)>0 and (strOld[0]==' ' or strOld[0]=='\t'):
-    			strIndent+=strOld[0]
-    			strOld=strOld[1:]
-    		isNumbered=False
-    		if len(strOld)>0:    		
-    			while strOld[0] in strSyms:
-    				isNumbered=True
-    				strOld=strOld[2:]
-    				if len(strOld)==0:
+    		str_syms='1234567890.'
+    		str_indent=''
+    		while len(str_old)>0 and (str_old[0]==' ' or str_old[0]=='\t'):
+    			str_indent+=str_old[0]
+    			str_old=str_old[1:]
+    		is_numbered=False
+    		if len(str_old)>0:    		
+    			while str_old[0] in str_syms:
+    				is_numbered=True
+    				str_old=str_old[2:]
+    				if len(str_old)==0:
     					break
-    		if isNumbered:
-    			ed_self.set_text_line(strOldNum,strIndent+'\t1.'+strOld)
-    		ed_self.set_caret(len(ed_self.get_text_line(strOldNum)),strOldNum)
+    		if is_numbered:
+    			ed_self.set_text_line(str_oldNum,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+'1.'+str_old)
+    		ed_self.set_caret(len(ed_self.get_text_line(str_oldNum)),str_oldNum)
     		#barr=['*','-','+','\\']
     		def nextb(curb):
     			i=0
@@ -262,9 +262,9 @@ class Command:
     				else:
     					i+=1
     			return barr[0]
-    		if len(strOld)==0:return
-    		if strOld[0]in self.barr:
-    			if strOld[0]=='*':
+    		if len(str_old)==0:return
+    		if str_old[0]in self.barr:
+    			if str_old[0]=='*':
     				x,y=ed_self.get_carets()[0][:2]
     				strt=ed_self.get_text_line(y)
     				while(strt[0] in [' ','\t']):
@@ -275,8 +275,8 @@ class Command:
     				else:
     					ed_self.insert(0,y,'\t')
     			x,y = ed_self.get_carets()[0][:2]
-    			if strOld[2:]=='':
-    				ed_self.set_text_line(y,strIndent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+nextb(strOld[0])+' '+strOld[2:])
+    			if str_old[2:]=='':
+    				ed_self.set_text_line(y,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+nextb(str_old[0])+' '+str_old[2:])
     			ed_self.set_caret(x+2,y)
     		return False
     	elif key==56:
