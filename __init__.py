@@ -14,6 +14,7 @@ class Command:
     
     def __init__(self):
         self.MAX_HASHES=6
+        self.DOUBLE_MAX_HASHES=self.MAX_HASHES*2
         self.bullets=ini_read('cuda_markdown_editing.ini','op','list_indent_bullets','*+-')
         self.match_header_hashes=str_to_bool(ini_read('cuda_markdown_editing.ini','op','match_header_hashes','0'))
         self.need_doubling_res=self.match_header_hashes
@@ -64,7 +65,7 @@ class Command:
     						else:
     							break
     					if i<=self.MAX_HASHES:
-    						ed_self.set_sel_rect(i,y1,len(ln),y1)
+    						ed_self.set_caret(i,y1,len(ln),y1)
     					else:
     						while(len(ln)>0):
     							if ln[0]=='#':
@@ -74,7 +75,7 @@ class Command:
     							else:
     								break
     						ed_self.set_text_line(y1,ln)
-    						ed_self.set_sel_rect(0,y1,len(ln),y1)
+    						ed_self.set_caret(0,y1,len(ln),y1)
     					return False
     			else:
     				y   = ed_self.get_carets()[0][1]
@@ -93,7 +94,7 @@ class Command:
     						i+=1
     					else:
     						break
-    				if((numres>=6) and (not self.need_doubling_res)) or (numres>=12):
+    				if((numres>=6) and (not self.need_doubling_res)) or (numres>=self.DOUBLE_MAX_HASHES):
     					ed_self.set_text_line(y,' ')
     					ed_self.set_caret(0,y)
     					return False
@@ -121,7 +122,7 @@ class Command:
     		    	ed_self.set_caret(x1+2,y1, x2+2,y2)
     		    return False
     	if key==13:
-    		#enter#
+    		# enter
     		str_old=ed_self.get_text_line(ed_self.get_carets()[0][1])
     		str_add_f=''
     		indent=1
@@ -131,7 +132,8 @@ class Command:
     			indent+=1
     		if not str_old:
     			return True
-    		if str_old[0] in self.bullets:
+    		if str_old[0] in '-+*':
+    			is_gfm = (str_old[2:5] in ['[ ]','[*]'])
     			if len(str_old)==1 and str_old[0]=='-':
     				return True
     			if str_old[0]=='-' and not str_old[1]==' ':
@@ -143,15 +145,16 @@ class Command:
     			empty=True
     			for i in str_old:
     				if not i in [' ','\t']:
-    					if not i in self.bullets:
+    					if not i in '*-+':
     						empty=False
     			if empty:
     				ed_self.set_text_line(y,' '*x)
     				ed_self.set_caret(x-2,y)
     				return False
     			x,y = ed_self.get_carets()[0][:2]
-    			ed_self.insert(x,y,'\n'+str_add_f+str_old[0]+' ')
-    			ed_self.set_caret(indent+1,ed_self.get_carets()[0][1]+1)
+    			ggf=('[ ]' if is_gfm else '')
+    			ed_self.insert(x,y,'\n'+str_add_f+str_old[0]+' '+ggf)
+    			ed_self.set_caret(indent+1+len(ggf),ed_self.get_carets()[0][1]+1)
     			return False
     		num_arr=['1','2','3','4','5','6','7','8','9','0']
     		if str_old[0] in num_arr:
@@ -190,12 +193,20 @@ class Command:
     			ed_self.delete(x,y,x+1,y)
     		if strt[0] in['"',"'","`"] and strt[0]==strt[1]:
     			ed_self.delete(x,y,x+1,y)
+    	if key==8:
+    		# backspace
+    		x,y,x1,y1 = ed_self.get_carets()[0]
+    		subst=ed_self.get_text_substr(x-1,y,x+1,y)
+    		if subst=="''" or subst=='""':
+    			ed_self.delete(x-1,y,x+1,y)
+    			ed_self.set_caret(x-1,y)
+    			return False
     	if key==9:
     		#tab symbol
-    		str_oldNum=ed_self.get_carets()[0][1]
-    		str_old=ed_self.get_text_line(str_oldNum)
+    		str_old_num=ed_self.get_carets()[0][1]
+    		str_old=ed_self.get_text_line(str_old_num)
     		if 's' in state:
-    			#str_old=str_old=ed_self.get_text_line(str_oldNum)
+    			#str_old=str_old=ed_self.get_text_line(str_old_num)
     			if str_old[0]==' ' or str_old[0]=='\t':
     				if str_old[0]==' ':
     					str_old=str_old[1:]
@@ -218,8 +229,8 @@ class Command:
     					sym=self.barr[j-1]
     				else:
     					sym='* '
-    				ed_self.set_text_line(str_oldNum,i+sym+wt)
-    				ed_self.set_caret(len(i)+2, str_oldNum)
+    				ed_self.set_text_line(str_old_num,i+sym+wt)
+    				ed_self.set_caret(len(i)+2, str_old_num)
     			i=0
     			return False
     		if len(str_old)==0:
@@ -233,7 +244,7 @@ class Command:
     				if same:
     					str_old=str_old[:1]
     					x,y = ed_self.get_carets()[0][:2]
-    					for i in range(len(ed_self.get_text_line(str_oldNum)), len(ed_self.get_text_line(str_oldNum-1))):
+    					for i in range(len(ed_self.get_text_line(str_old_num)), len(ed_self.get_text_line(str_old_num-1))):
     						str_old+=str_old[0]
     					ed_self.set_text_line(y,str_old)
     					ed_self.set_caret(len(str_old),y)
@@ -251,8 +262,8 @@ class Command:
     				if len(str_old)==0:
     					break
     		if is_numbered:
-    			ed_self.set_text_line(str_oldNum,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+'1.'+str_old)
-    		ed_self.set_caret(len(ed_self.get_text_line(str_oldNum)),str_oldNum)
+    			ed_self.set_text_line(str_old_num,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+'1.'+str_old)
+    		ed_self.set_caret(len(ed_self.get_text_line(str_old_num)),str_old_num)
     		#barr=['*','-','+','\\']
     		def nextb(curb):
     			i=0
@@ -283,11 +294,14 @@ class Command:
     		# * symbol
     		if 's' in state:
     			x1,y1,x2,y2=ed_self.get_carets()[0]
-    			if (x2<x1 and y2==y1) or y2<y1:
+    			if (x2!=-1 and y2!=-1) and((x2<x1 and y2==y1) or y2<y1):
     				x1,x2=x2,x1
+    				print('h1')
     			if x2==-1 and y2==-1:
+    				#ed_self.insert(x1,y1,'**')
+    				print('h2')
     				return True
-    				
+    			print('h2')
     			ed_self.insert(x2,y2,'*')
     			ed_self.insert(x1,y1,'*')
     			if y2==y1:
@@ -295,9 +309,32 @@ class Command:
     			else:
     				ed_self.set_caret(x1+1,y1,x2,y2)
     			return False
+    	elif key==189:
+    		# _ symbol
+    		print(189)
+    		if 's' in state:
+    			x1,y1,x2,y2=ed_self.get_carets()[0]
+    			if (x2<x1 and y2==y1) or y2<y1:
+    				x1,x2=x2,x1
+    			if x2==-1 and y2==-1:
+    				ed_self.insert(x,y,'_')
+    				return True
+    				
+    			ed_self.insert(x2,y2,'_')
+    			ed_self.insert(x1,y1,'_')
+    			x1,y1,x2,y2=ed_self.get_carets()[0]
+    			if (y2==-1) and (x2==-1):
+    				return True
+    			if y2==y1:
+    				ed_self.set_caret(x1+1,y1,x2+1,y2)
+    			else:
+    				ed_self.set_caret(x1+1,y1,x2,y2)
+    			return False
+    	else:
+    		print(key)
     def on_insert(self, ed_self, text):
     	if text in ['"',"'",'#',
-    	'~','*','`']:
+    	'~','*','`','_']:
     		if text=='#' and not self.need_doubling_res:
     			return
     		x,y = ed_self.get_carets()[0][:2]
