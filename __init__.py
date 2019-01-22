@@ -65,7 +65,7 @@ class Command:
     						else:
     							break
     					if i<=self.MAX_HASHES:
-    						ed_self.set_caret(i,y1,len(ln),y1)
+    						ed_self.set_caret(i,y1,len(ln)-i,y1)
     					else:
     						while(len(ln)>0):
     							if ln[0]=='#':
@@ -228,7 +228,7 @@ class Command:
     						j+=1
     					sym=self.barr[j-1]
     				else:
-    					sym='* '
+    					sym=self.bullets[0]+' '
     				ed_self.set_text_line(str_old_num,i+sym+wt)
     				ed_self.set_caret(len(i)+2, str_old_num)
     			i=0
