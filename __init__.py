@@ -13,9 +13,10 @@ def str_to_bool(s): return s=='1'
 class Command:
     
     def __init__(self):
+        self.MAX_HASHES=6
         self.bullets=ini_read('cuda_markdown_editing.ini','op','list_indent_bullets','*+-')
         self.match_header_hashes=str_to_bool(ini_read('cuda_markdown_editing.ini','op','match_header_hashes','0'))
-        self.needDoublingRes=self.match_header_hashes
+        self.need_doubling_res=self.match_header_hashes
         if self.bullets=='':
         	self.bullets='*'
         barr=[]
@@ -52,7 +53,7 @@ class Command:
     						x1+=1
     					if x2<x1:
     						x1,x2=x2,x1
-    					if self.needDoublingRes:
+    					if self.need_doubling_res:
     						ed_self.insert(x2-1,y2,'#')
     					ed_self.insert(0,y2,'#')
     					ln=ed_self.get_text_line(y1)
@@ -62,7 +63,7 @@ class Command:
     							i+=1
     						else:
     							break
-    					if i<=6:
+    					if i<=self.MAX_HASHES:
     						ed_self.set_sel_rect(i,y1,len(ln),y1)
     					else:
     						while(len(ln)>0):
@@ -92,7 +93,7 @@ class Command:
     						i+=1
     					else:
     						break
-    				if((numres>=6) and (not self.needDoublingRes)) or (numres>=12):
+    				if((numres>=6) and (not self.need_doubling_res)) or (numres>=12):
     					ed_self.set_text_line(y,' ')
     					ed_self.set_caret(0,y)
     					return False
@@ -115,9 +116,9 @@ class Command:
     		    	ed_self.insert(x2,y2,symm)
     		    	ed_self.insert(x1,y1,symm)
     		    if symm=='`':
-    		    	ed_self.set_sel_rect(x1+1,y1, x2+1,y2)
+    		    	ed_self.set_caret(x1+1,y1, x2+1,y2)
     		    else:
-    		    	ed_self.set_sel_rect(x1+2,y1, x2+2,y2)
+    		    	ed_self.set_caret(x1+2,y1, x2+2,y2)
     		    return False
     	if key==13:
     		#enter#
@@ -146,7 +147,7 @@ class Command:
     						empty=False
     			if empty:
     				ed_self.set_text_line(y,' '*x)
-    				ed_self.set_caret(x,y)
+    				ed_self.set_caret(x-2,y)
     				return False
     			x,y = ed_self.get_carets()[0][:2]
     			ed_self.insert(x,y,'\n'+straddF+strOld[0]+' ')
@@ -243,11 +244,12 @@ class Command:
     			strIndent+=strOld[0]
     			strOld=strOld[1:]
     		isNumbered=False
-    		while strOld[0] in strSyms:
-    			isNumbered=True
-    			strOld=strOld[2:]
-    			if len(strOld)==0:
-    				break
+    		if len(strOld)>0:    		
+    			while strOld[0] in strSyms:
+    				isNumbered=True
+    				strOld=strOld[2:]
+    				if len(strOld)==0:
+    					break
     		if isNumbered:
     			ed_self.set_text_line(strOldNum,strIndent+'\t1.'+strOld)
     		ed_self.set_caret(len(ed_self.get_text_line(strOldNum)),strOldNum)
@@ -273,25 +275,30 @@ class Command:
     				else:
     					ed_self.insert(0,y,'\t')
     			x,y = ed_self.get_carets()[0][:2]
-    			ed_self.set_text_line(y,strIndent+'\t'+nextb(strOld[0])+' '+strOld[2:])
-    			ed_self.set_caret(x+1,y)
+    			if strOld[2:]=='':
+    				ed_self.set_text_line(y,strIndent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+nextb(strOld[0])+' '+strOld[2:])
+    			ed_self.set_caret(x+2,y)
     		return False
     	elif key==56:
+    		# * symbol
     		if 's' in state:
     			x1,y1,x2,y2=ed_self.get_carets()[0]
-    			if x2<x1:
+    			if (x2<x1 and y2==y1) or y2<y1:
     				x1,x2=x2,x1
     			if x2==-1 and y2==-1:
     				return True
     				
     			ed_self.insert(x2,y2,'*')
     			ed_self.insert(x1,y1,'*')
-    			ed_self.set_sel_rect(x1+1,y1,x2+1,y2)
+    			if y2==y1:
+    				ed_self.set_caret(x1+1,y1,x2+1,y2)
+    			else:
+    				ed_self.set_caret(x1+1,y1,x2,y2)
     			return False
     def on_insert(self, ed_self, text):
     	if text in ['"',"'",'#',
     	'~','*','`']:
-    		if text=='#' and not self.needDoublingRes:
+    		if text=='#' and not self.need_doubling_res:
     			return
     		x,y = ed_self.get_carets()[0][:2]
     		ed_self.insert(x,y,text)
