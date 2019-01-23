@@ -140,7 +140,7 @@ class Command:
     		if not str_old:
     			return True
     		if str_old[0] in '-+*':
-    			is_gfm = (str_old[2:5] in ['[ ]','[*]'])
+    			is_gfm = (str_old[2:5] in ['[ ]','[X]'])
     			if len(str_old)==1 and str_old[0]=='-':
     				return True
     			if str_old[0]=='-' and not str_old[1]==' ':
@@ -161,7 +161,7 @@ class Command:
     			x,y = ed_self.get_carets()[0][:2]
     			ggf=('[ ]' if is_gfm else '')
     			ed_self.insert(x,y,'\n'+str_add_f+str_old[0]+' '+ggf)
-    			ed_self.set_caret(indent+1+len(ggf),ed_self.get_carets()[0][1]+1)
+    			ed_self.set_caret(indent+1+len(ggf)+1,ed_self.get_carets()[0][1]+1)
     			return False
     		num_arr=['1','2','3','4','5','6','7','8','9','0']
     		if str_old[0] in num_arr:
