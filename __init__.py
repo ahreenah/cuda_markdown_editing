@@ -132,6 +132,7 @@ class Command:
     		    	else:
     		    		ed_self.set_caret(x1+2,y1, x2,y2)
     		    return False
+    		return
     		print('here')
     		ed_self.insert(x,y,symm)
     		ed_self.insert(x+1,y,symm)
@@ -350,6 +351,7 @@ class Command:
     def on_insert(self, ed_self, text):
     	if text in ['"',"'",'#',
     	'~','*','`','_']:
+    		print('dd')
     		if text=='#' and not self.need_doubling_res:
     			return
     		x,y = ed_self.get_carets()[0][:2]
