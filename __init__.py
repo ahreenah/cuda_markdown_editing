@@ -20,6 +20,10 @@ class Command:
         self.need_doubling_res=self.match_header_hashes
         if self.bullets=='':
         	self.bullets='*'
+        self.bullets+=self.bullets[0]
+        for i in '*-+':
+        	if not i in self.bullets:
+        		self.bullets+=i+i
         barr=[]
         for i in self.bullets:
         	barr.append(i)
@@ -140,7 +144,7 @@ class Command:
     		if not str_old:
     			return True
     		if str_old[0] in '-+*':
-    			is_gfm = (str_old[2:5] in ['[ ]','[X]'])
+    			is_gfm = (str_old[2:5] in ['[ ]','[X]','[x]'])
     			if len(str_old)==1 and str_old[0]=='-':
     				return True
     			if str_old[0]=='-' and not str_old[1]==' ':
@@ -159,7 +163,7 @@ class Command:
     				ed_self.set_caret(x-2,y)
     				return False
     			x,y = ed_self.get_carets()[0][:2]
-    			ggf=('[ ]' if is_gfm else '')
+    			ggf=(' [ ]' if is_gfm else '')
     			ed_self.insert(x,y,'\n'+str_add_f+str_old[0]+ggf)
     			ed_self.set_caret(indent+1+len(ggf),ed_self.get_carets()[0][1]+1)
     			return False
@@ -231,10 +235,10 @@ class Command:
     						if len(str_old)==0:
     							break
     				wt=str_old[1:]
-    				if sym in self.barr:
-    					j=0
+    				if sym in '*-+':
+    					j=len(self.barr)-1
     					while self.barr[j]!=sym:
-    						j+=1
+    						j-=1
     					sym=self.barr[j-1]
     				else:
     					sym=self.bullets[0]+' '
