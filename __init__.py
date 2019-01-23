@@ -107,8 +107,9 @@ class Command:
     		else:
     			symm='`'
     		x1,y1,x2,y2 = ed_self.get_carets()[0]
-    		if x2<x1 and  x2!=-1:
+    		if (x2<x1 and y2==y1) or y2<y1:
     			x2,x1=x1,x2
+    			y2,y1=y1,y2
     		if (x2 != -1) or (y2 != -1):
     		    if (y2>y1) or ((y2==y1) and (x2>x1)):
     		    	ed_self.insert(x2,y2,symm)
@@ -117,9 +118,15 @@ class Command:
     		    	ed_self.insert(x2,y2,symm)
     		    	ed_self.insert(x1,y1,symm)
     		    if symm=='`':
-    		    	ed_self.set_caret(x1+1,y1, x2+1,y2)
+    		    	if y2==y1:
+    		    		ed_self.set_caret(x1+1,y1, x2+1,y2)
+    		    	else:
+    		    		ed_self.set_caret(x1+1,y1, x2,y2)
     		    else:
-    		    	ed_self.set_caret(x1+2,y1, x2+2,y2)
+    		    	if y2==y1:
+    		    		ed_self.set_caret(x1+2,y1, x2+2,y2)
+    		    	else:
+    		    		ed_self.set_caret(x1+2,y1, x2,y2)
     		    return False
     	if key==13:
     		# enter
@@ -296,7 +303,7 @@ class Command:
     			x1,y1,x2,y2=ed_self.get_carets()[0]
     			if (x2!=-1 and y2!=-1) and((x2<x1 and y2==y1) or y2<y1):
     				x1,x2=x2,x1
-    				print('h1')
+    				y2,y1=y1,y2
     			if x2==-1 and y2==-1:
     				#ed_self.insert(x1,y1,'**')
     				print('h2')
@@ -316,13 +323,12 @@ class Command:
     			x1,y1,x2,y2=ed_self.get_carets()[0]
     			if (x2<x1 and y2==y1) or y2<y1:
     				x1,x2=x2,x1
+    				y1,y2=y2,y1
     			if x2==-1 and y2==-1:
     				ed_self.insert(x,y,'_')
     				return True
-    				
     			ed_self.insert(x2,y2,'_')
     			ed_self.insert(x1,y1,'_')
-    			x1,y1,x2,y2=ed_self.get_carets()[0]
     			if (y2==-1) and (x2==-1):
     				return True
     			if y2==y1:
