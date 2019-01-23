@@ -160,8 +160,8 @@ class Command:
     				return False
     			x,y = ed_self.get_carets()[0][:2]
     			ggf=('[ ]' if is_gfm else '')
-    			ed_self.insert(x,y,'\n'+str_add_f+str_old[0]+' '+ggf)
-    			ed_self.set_caret(indent+1+len(ggf)+1,ed_self.get_carets()[0][1]+1)
+    			ed_self.insert(x,y,'\n'+str_add_f+str_old[0]+ggf)
+    			ed_self.set_caret(indent+1+len(ggf),ed_self.get_carets()[0][1]+1)
     			return False
     		num_arr=['1','2','3','4','5','6','7','8','9','0']
     		if str_old[0] in num_arr:
@@ -200,11 +200,13 @@ class Command:
     			ed_self.delete(x,y,x+1,y)
     		if strt[0] in['"',"'","`"] and strt[0]==strt[1]:
     			ed_self.delete(x,y,x+1,y)
+    		if strt[0:2] in ['()','[]','{}']:
+    			ed_self.delete(x,y,x+1,y)
     	if key==8:
     		# backspace
     		x,y,x1,y1 = ed_self.get_carets()[0]
     		subst=ed_self.get_text_substr(x-1,y,x+1,y)
-    		if subst=="''" or subst=='""':
+    		if subst in ["''" , '""' , '{}' , '[]' , '()', '**']:
     			ed_self.delete(x-1,y,x+1,y)
     			ed_self.set_caret(x-1,y)
     			return False
@@ -237,7 +239,7 @@ class Command:
     				else:
     					sym=self.bullets[0]+' '
     				ed_self.set_text_line(str_old_num,i+sym+wt)
-    				ed_self.set_caret(len(i)+2, str_old_num)
+    				ed_self.set_caret(len(i)+3, str_old_num)
     			i=0
     			return False
     		if len(str_old)==0:
