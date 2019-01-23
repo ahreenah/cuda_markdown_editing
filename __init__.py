@@ -132,6 +132,9 @@ class Command:
     		    	else:
     		    		ed_self.set_caret(x1+2,y1, x2,y2)
     		    return False
+    		print('here')
+    		ed_self.insert(x,y,symm)
+    		ed_self.insert(x+1,y,symm)
     	if key==13:
     		# enter
     		str_old=ed_self.get_text_line(ed_self.get_carets()[0][1])
