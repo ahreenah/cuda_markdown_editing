@@ -137,8 +137,8 @@ class Command:
                     return False
                 
                 print('here')
-                ed_self.insert(x,y,symm)
-                ed_self.insert(x+1,y,symm)
+                #ed_self.insert(x,y,symm)
+                #ed_self.insert(x+1,y,symm)
         if key==13:
                 # enter
                 str_old=ed_self.get_text_line(ed_self.get_carets()[0][1])
@@ -217,7 +217,7 @@ class Command:
                 # backspace
                 x,y,x1,y1 = ed_self.get_carets()[0]
                 subst=ed_self.get_text_substr(x-1,y,x+1,y)
-                if subst in ["''" , '""' , '{}' , '[]' , '()', '**']:
+                if subst in ["''" , '""' , '{}' , '[]' , '()', '**','``']:
                         ed_self.delete(x-1,y,x+1,y)
                         ed_self.set_caret(x-1,y)
                         return False
