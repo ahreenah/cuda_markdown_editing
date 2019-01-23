@@ -94,7 +94,7 @@ class Command:
     						i+=1
     					else:
     						break
-    				if((numres>=6) and (not self.need_doubling_res)) or (numres>=self.DOUBLE_MAX_HASHES):
+    				if((numres>=self.MAX_HASHES) and (not self.need_doubling_res)) or (numres>=self.DOUBLE_MAX_HASHES):
     					ed_self.set_text_line(y,' ')
     					ed_self.set_caret(0,y)
     					return False
