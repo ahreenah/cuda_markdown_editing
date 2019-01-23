@@ -112,9 +112,12 @@ class Command:
     			symm='`'
     		x1,y1,x2,y2 = ed_self.get_carets()[0]
     		if (x2<x1 and y2==y1) or y2<y1:
-    			x2,x1=x1,x2
-    			y2,y1=y1,y2
+    			if x2!=-1 or y2!=-1:
+    				x2,x1=x1,x2
+    				y2,y1=y1,y2
+    		print('h1')
     		if (x2 != -1) or (y2 != -1):
+    		    print(str(x2)+' '+str(y2))
     		    if (y2>y1) or ((y2==y1) and (x2>x1)):
     		    	ed_self.insert(x2,y2,symm)
     		    	ed_self.insert(x1,y1,symm)	
@@ -132,7 +135,7 @@ class Command:
     		    	else:
     		    		ed_self.set_caret(x1+2,y1, x2,y2)
     		    return False
-    		return
+    		
     		print('here')
     		ed_self.insert(x,y,symm)
     		ed_self.insert(x+1,y,symm)
@@ -331,12 +334,13 @@ class Command:
     		print(189)
     		if 's' in state:
     			x1,y1,x2,y2=ed_self.get_carets()[0]
+    			if x2==-1 and y2==-1:
+    				ed_self.insert(x1,y1,'_')
+    				return True
     			if (x2<x1 and y2==y1) or y2<y1:
     				x1,x2=x2,x1
     				y1,y2=y2,y1
-    			if x2==-1 and y2==-1:
-    				ed_self.insert(x,y,'_')
-    				return True
+    			
     			ed_self.insert(x2,y2,'_')
     			ed_self.insert(x1,y1,'_')
     			if (y2==-1) and (x2==-1):
@@ -350,7 +354,7 @@ class Command:
     		print(key)
     def on_insert(self, ed_self, text):
     	if text in ['"',"'",'#',
-    	'~','*','`','_']:
+    	'~','*','`']:
     		print('dd')
     		if text=='#' and not self.need_doubling_res:
     			return
