@@ -165,9 +165,9 @@ class Command:
                     ed_self.set_caret(x-2,y)
                     return False
                 x,y = ed_self.get_carets()[0][:2]
-                ggf=(' [ ]' if is_gfm else '')
+                ggf=(' [ ]' if is_gfm else ' ')
                 ed_self.insert(x,y,'\n'+str_add_f+str_old[0]+ggf)
-                ed_self.set_caret(indent+1+len(ggf),ed_self.get_carets()[0][1]+1)
+                ed_self.set_caret(indent+len(ggf),ed_self.get_carets()[0][1]+1)
                 return False
             num_arr=['1','2','3','4','5','6','7','8','9','0']
             if str_old[0] in num_arr:
@@ -245,7 +245,7 @@ class Command:
                     else:
                         sym=self.bullets[0]+' '
                     ed_self.set_text_line(str_old_num,i+sym+wt)
-                    ed_self.set_caret(len(i)+3, str_old_num)
+                    ed_self.set_caret(len(i)+2, str_old_num)
                 i=0
                 return False
             if len(str_old)==0:
@@ -262,7 +262,7 @@ class Command:
                         for i in range(len(ed_self.get_text_line(str_old_num)), len(ed_self.get_text_line(str_old_num-1))):
                             str_old+=str_old[0]
                         ed_self.set_text_line(y,str_old)
-                        ed_self.set_caret(len(str_old),y)
+                        ed_self.set_caret(len(str_old)+1,y)
                         return False
             str_syms='1234567890.'
             str_indent=''
@@ -279,6 +279,7 @@ class Command:
             if is_numbered:
                 ed_self.set_text_line(str_old_num,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+'1.'+str_old)
             ed_self.set_caret(len(ed_self.get_text_line(str_old_num)),str_old_num)
+            return False
             #barr=['*','-','+','\\']
             def nextb(curb):
                 i=0
@@ -299,7 +300,7 @@ class Command:
                     if '*' in strt:
                         return False
                     else:
-                        ed_self.insert(0,y,'\t')
+                        ed_self.insert(0,y,' '*ed_self.get_prop(PROP_INDENT_SIZE))
                 x,y = ed_self.get_carets()[0][:2]
                 if str_old[2:]=='':
                     ed_self.set_text_line(y,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+nextb(str_old[0])+' '+str_old[2:])
