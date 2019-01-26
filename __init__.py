@@ -37,15 +37,7 @@ class Command:
             config_file.write(default_config_text)
             config_file.close()
         file_open(fn_config)
-        
-    def run(self):
-        s = '''
-        file lines count: {cnt}
-        '''.format(
-             cnt = ed.get_line_count()
-             )
-        msg_box(s, MB_OK)
-        
+                
     def on_key(self, ed_self, key, state):
         if key==51:
             # hash symnol
@@ -59,7 +51,16 @@ class Command:
                     if x2<x1:
                         x1,x2=x2,x1
                     if self.need_doubling_res:
-                        ed_self.insert(x2-1,y2,'#')
+                        str_old=ed_self.get_text_line(y2)
+                        print(str_old[-1])
+                        if not str_old[-1] in [' ','#']:
+                          ins=' #'
+                        else:
+                          ins='#'
+                        ed_self.insert(x2-1,y2,ins)
+                    str_old=ed_self.get_text_line(y2)
+                    if not (str_old[0]in [' ','#']):
+                    	ed_self.insert(0,y2,' ')
                     ed_self.insert(0,y2,'#')
                     ln=ed_self.get_text_line(y1)
                     i=0
@@ -69,7 +70,7 @@ class Command:
                         else:
                             break
                     if i<=self.MAX_HASHES:
-                        ed_self.set_caret(i,y1,len(ln)-i,y1)
+                        ed_self.set_caret(i,y1,len(ln),y1)
                     else:
                         while(len(ln)>0):
                             if ln[0]=='#':
@@ -86,18 +87,21 @@ class Command:
                     st  = ed_self.get_text_line(y)
                     sto = st
                     if len(st)>0:
+                        print('k1')
                         while (len(st)>0)  and (st[0] in [' ','\t','#']):
+                            print('k2')
                             st=st[1:]
+                    else:
+                    	return True
+                    print('k3')
                     i=0
                     numres=0
                     st  = ed_self.get_text_line(y)
-                    while(i<len(st)):
-                        if st[i]=='#':
-                            numres+=1
-                            i+=1
-                        else:
-                            break
-                    if((numres>=self.MAX_HASHES) and (not self.need_doubling_res)) or (numres>=self.DOUBLE_MAX_HASHES):
+                    for i in st:
+                    	print('k4')
+                    	if i=='#':numres+=1
+                    	else:break
+                    if(numres>=self.MAX_HASHES):# and (not self.need_doubling_res)) or (numres>=self.DOUBLE_MAX_HASHES):
                         ed_self.set_text_line(y,' ')
                         ed_self.set_caret(0,y)
                         return False
@@ -136,9 +140,27 @@ class Command:
                 return False
         if key==13:
             # enter
-            str_old=ed_self.get_text_line(ed_self.get_carets()[0][1])
+            lnum=ed_self.get_carets()[0][1]# line number
+            str_old=ed_self.get_text_line(lnum)
             str_add_f=''
             indent=1
+            if str_old[0]=='>':
+            	ed_self.insert(0,lnum+1,'> \n')
+            	ed_self.set_caret(2,lnum+1)
+            	return False
+            if len(str_old)==0:
+                return True
+            resnum=0
+            #if str_old[0]=='#':
+            for i in str_old:
+                if i=='#':
+                    resnum+=1
+                else:
+                    break
+            if self.need_doubling_res:
+            	ed_self.insert(len(str_old),lnum,' '+'#'*resnum+'\n')
+            	ed_self.set_caret(0,lnum+1)
+            	return False
             while len(str_old)>0 and (str_old[0]==' ' or str_old[0]=='\t'):
                 str_add_f+=str_old[0]
                 str_old=str_old[1:]
@@ -165,7 +187,7 @@ class Command:
                     ed_self.set_caret(x-2,y)
                     return False
                 x,y = ed_self.get_carets()[0][:2]
-                ggf=(' [ ]' if is_gfm else ' ')
+                ggf=(' [ ] ' if is_gfm else ' ')
                 ed_self.insert(x,y,'\n'+str_add_f+str_old[0]+ggf)
                 ed_self.set_caret(indent+len(ggf),ed_self.get_carets()[0][1]+1)
                 return False
@@ -189,6 +211,8 @@ class Command:
             # > symbol
             if 's' in state:
                 x1,y1,x2,y2=ed_self.get_carets()[0]
+                if x2==-1 and y2==-1:
+                	return True
                 if y2<y1:
                     y1, y2 = y2, y1
                 for i in range(y1, y2+1):
@@ -220,6 +244,8 @@ class Command:
             #tab symbol
             str_old_num=ed_self.get_carets()[0][1]
             str_old=ed_self.get_text_line(str_old_num)
+            if str_old=='':
+            	return False
             if 's' in state:
                 #str_old=str_old=ed_self.get_text_line(str_old_num)
                 if str_old[0]==' ' or str_old[0]=='\t':
@@ -248,8 +274,10 @@ class Command:
                     ed_self.set_caret(len(i)+2, str_old_num)
                 i=0
                 return False
+            
             if len(str_old)==0:
                 return True
+            
             if str_old[0] in '-=' :
                 if not len(str_old)>=2:
                     same=True
@@ -276,10 +304,11 @@ class Command:
                     str_old=str_old[2:]
                     if len(str_old)==0:
                         break
+            print('kp0')
             if is_numbered:
                 ed_self.set_text_line(str_old_num,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+'1.'+str_old)
-            ed_self.set_caret(len(ed_self.get_text_line(str_old_num)),str_old_num)
-            return False
+                ed_self.set_caret(len(ed_self.get_text_line(str_old_num)),str_old_num)
+                return False
             #barr=['*','-','+','\\']
             def nextb(curb):
                 i=0
@@ -290,7 +319,9 @@ class Command:
                         i+=1
                 return barr[0]
             if len(str_old)==0:return
+            print('kp1')
             if str_old[0]in self.barr:
+                print('kp2')
                 if str_old[0]=='*':
                     x,y=ed_self.get_carets()[0][:2]
                     strt=ed_self.get_text_line(y)
@@ -348,7 +379,7 @@ class Command:
         else:
             print(key)
     def on_insert(self, ed_self, text):
-        if text in ['"',"'",'#',
+        if text in ['"',"'",# deleted hashtag symbol
         '~','*','`']:
             print('dd')
             if text=='#' and not self.need_doubling_res:
