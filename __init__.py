@@ -204,10 +204,17 @@ class Command:
                     i = i+1
                 if (i<ll):
                     if(str_old[i]=='.'):
+                        f=True
+                        for k in range(i+1,len(str_old)):
+                            if not str_old[k] in [' ','\t']:
+                                f=False
+                        if f:
+                            ed_self.set_text_line(lnum,' ')
+                            return False
                         nm=int(s)
                         car = ed_self.get_carets()[0]
-                        ed_self.insert(car[0],car[1],'\n'+str_add_f+str(nm+1)+'.')
-                        ed_self.set_caret(len(str_add_f+str(nm+1)+'.'),car[1]+1)
+                        ed_self.insert(car[0],car[1],'\n'+str_add_f+str(nm+1)+'. ')
+                        ed_self.set_caret(len(str_add_f+str(nm+1)+'. '),car[1]+1)
                         return False
         if key==190:
             # > symbol
@@ -287,15 +294,21 @@ class Command:
             str_old=ed_self.get_text_line(str_old_num)
             print('so='+str_old)
             if str_old[0] in '-=' :
-                print('came in')
-                if not False:#len(str_old)>=2:
+                print('kpa')
+                if str_old_num>0:#len(str_old)>=2:
+                    preline=ed_self.get_text_line(str_old_num-1)
+                    f=False
+                    if len(preline)>0:
+                        if preline[0].isalpha() or preline[0].isdigit():
+                            f=True
+                    if not f:
+                        return True
                     same=True
                     for i in str_old:
                         if not i in [' ','\t','-','='] :
                             same=False
                     if same:
                         str_old=str_old[0]
-                        print('here')
                         x,y = ed_self.get_carets()[0][:2]
                         for i in range(len(str_old), len(ed_self.get_text_line(str_old_num-1))):
                             str_old+=str_old[0]
