@@ -246,6 +246,7 @@ class Command:
             str_old=ed_self.get_text_line(str_old_num)
             if str_old=='':
             	return True
+            	
             if 's' in state:
                 #str_old=str_old=ed_self.get_text_line(str_old_num)
                 if str_old[0]==' ' or str_old[0]=='\t':
@@ -336,7 +337,8 @@ class Command:
                 if str_old[2:]=='':
                     ed_self.set_text_line(y,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+nextb(str_old[0])+' '+str_old[2:])
                 ed_self.set_caret(x+2,y)
-            return False
+                return False
+            return True
         elif key==56:
         # * symbol
             if 's' in state:
