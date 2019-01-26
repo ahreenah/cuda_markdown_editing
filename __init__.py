@@ -150,6 +150,7 @@ class Command:
             	return False
             if len(str_old)==0:
                 return True
+            print('st0'+str_old)
             resnum=0
             #if str_old[0]=='#':
             for i in str_old:
@@ -157,7 +158,7 @@ class Command:
                     resnum+=1
                 else:
                     break
-            if self.need_doubling_res:
+            if self.need_doubling_res and resnum>0:
             	ed_self.insert(len(str_old),lnum,' '+'#'*resnum+'\n')
             	ed_self.set_caret(0,lnum+1)
             	return False
@@ -167,6 +168,7 @@ class Command:
                 indent+=1
             if not str_old:
                 return True
+            print('nn'+str_old)
             if str_old[0] in '-+*':
                 is_gfm = (str_old[2:5] in ['[ ]','[X]','[x]'])
                 if len(str_old)==1 and str_old[0]=='-':
@@ -278,17 +280,21 @@ class Command:
             
             if len(str_old)==0:
                 return True
-            
+        
+            str_old=ed_self.get_text_line(str_old_num)
+            print('so='+str_old)
             if str_old[0] in '-=' :
-                if not len(str_old)>=2:
+                print('came in')
+                if not False:#len(str_old)>=2:
                     same=True
                     for i in str_old:
                         if not i in [' ','\t','-','='] :
                             same=False
                     if same:
-                        str_old=str_old[:1]
+                        str_old=str_old[0]
+                        print('here')
                         x,y = ed_self.get_carets()[0][:2]
-                        for i in range(len(ed_self.get_text_line(str_old_num)), len(ed_self.get_text_line(str_old_num-1))):
+                        for i in range(len(str_old), len(ed_self.get_text_line(str_old_num-1))):
                             str_old+=str_old[0]
                         ed_self.set_text_line(y,str_old)
                         ed_self.set_caret(len(str_old)+1,y)
