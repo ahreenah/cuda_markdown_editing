@@ -218,7 +218,10 @@ class Command:
                 if y2<y1:
                     y1, y2 = y2, y1
                 for i in range(y1, y2+1):
-                    ed_self.insert(0,i,'> ')
+                    if ed_self.get_text_line(i)[0]=='>':
+                        ed_self.insert(0,i,'>')
+                    else:
+                        ed_self.insert(0,i,'> ')
                 return False
         if key==32:
             # space
@@ -297,7 +300,7 @@ class Command:
                         for i in range(len(str_old), len(ed_self.get_text_line(str_old_num-1))):
                             str_old+=str_old[0]
                         ed_self.set_text_line(y,str_old)
-                        ed_self.set_caret(len(str_old)+1,y)
+                        ed_self.set_caret(len(str_old),y)
                         return False
             str_syms='1234567890.'
             str_indent=''
