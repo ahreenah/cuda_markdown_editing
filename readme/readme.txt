@@ -3,13 +3,13 @@ Supports features during editing of Markdown documents.
 
 Symbols *_` (asterisk, underscore, tick)
   - auto-paired on typing
-  - if they are typed with selection in editor, selection is enclosed in symbols pair
-  - with pair of symbols, BackSpace key - both symbols are deleted
-  - with pair of symbols, Space key - right symbol of pair is deleted
+  - if they are typed with selected text, selection is enclosed in symbols pair
+  - with pair of symbols, and BackSpace pressed - both symbols are deleted
+  - with pair of symbols, and Space pressed - right symbol is deleted
 
-Lists (bullet symbols - + * with space)
-  - if caret is at the end of non-empty list item, and Enter pressed - newline is added with empty list item (on the same indent as previous item)
-  - if caret is at the end of empty list item, and Enter pressed - bullet is deleted and caret goes to bullet position
+List items (bullet symbol -+* with space)
+  - if caret at the end of non-empty list item, and Enter pressed - newline is added with empty list item (on the same indent as previous item)
+  - if caret at the end of empty list item, and Enter pressed - bullet is deleted and caret goes to bullet position
   - after empty list item, and Tab pressed - list item's indent is increased, and bullet kind is changed (by loop: +-*)
   - after empty list item, and Shift+Tab pressed - list item's indent is decreased, and bullet kind is changed
 
@@ -17,11 +17,11 @@ Tasks
   - [x] foo
     - [x] baz
   - [ ] bim
-  if caret is at the end of a task, and Enter pressed - newline with empty unchecked task is added.
+  if caret at the end of a task, and Enter pressed - newline with empty unchecked task is added.
 
 Block-quotes
   - if caret at the end of quoted line, and Enter pressed - newline with quote symbol is added
-  - if text is selected and > pressed - selection is enclosed in block-quote. First and last lines of multiline selection must not be fully selected. Single line must not be fully selected.
+  - if text is selected, and > pressed - selection is enclosed in block-quote. First and last lines of multiline selection must not be fully selected. Single line must not be fully selected.
 
 Links
   - if text selected, and ( or [ pressed - selection is enclosed into pair () or []
