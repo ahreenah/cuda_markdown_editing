@@ -245,7 +245,7 @@ class Command:
             str_old_num=ed_self.get_carets()[0][1]
             str_old=ed_self.get_text_line(str_old_num)
             if str_old=='':
-            	return False
+            	return True
             if 's' in state:
                 #str_old=str_old=ed_self.get_text_line(str_old_num)
                 if str_old[0]==' ' or str_old[0]=='\t':
