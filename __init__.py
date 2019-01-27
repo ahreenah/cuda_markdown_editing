@@ -11,7 +11,8 @@ def bool_to_str(v): return '1' if v else '0'
 def str_to_bool(s): return s=='1'
 
 class Command:
-    
+    def log(self,s):
+    	pass
     def __init__(self):
         self.MAX_HASHES=6
         self.DOUBLE_MAX_HASHES=self.MAX_HASHES*2
@@ -52,7 +53,7 @@ class Command:
                         x1,x2=x2,x1
                     if self.need_doubling_res:
                         str_old=ed_self.get_text_line(y2)
-                        print(str_old[-1])
+                        self.log(str_old[-1])
                         if not str_old[-1] in [' ','#']:
                           ins=' #'
                         else:
@@ -87,18 +88,18 @@ class Command:
                     st  = ed_self.get_text_line(y)
                     sto = st
                     if len(st)>0:
-                        print('k1')
+                        self.log('k1')
                         while (len(st)>0)  and (st[0] in [' ','\t','#']):
-                            print('k2')
+                            self.log('k2')
                             st=st[1:]
                     else:
                     	return True
-                    print('k3')
+                    self.log('k3')
                     i=0
                     numres=0
                     st  = ed_self.get_text_line(y)
                     for i in st:
-                    	print('k4')
+                    	self.log('k4')
                     	if i=='#':numres+=1
                     	else:break
                     if(numres>=self.MAX_HASHES):# and (not self.need_doubling_res)) or (numres>=self.DOUBLE_MAX_HASHES):
@@ -118,9 +119,9 @@ class Command:
                 if x2!=-1 or y2!=-1:
                     x2,x1=x1,x2
                     y2,y1=y1,y2
-            print('h1')
+            self.log('h1')
             if (x2 != -1) or (y2 != -1):
-                print(str(x2)+' '+str(y2))
+                self.log(str(x2)+' '+str(y2))
                 if (y2>y1) or ((y2==y1) and (x2>x1)):
                     ed_self.insert(x2,y2,symm)
                     ed_self.insert(x1,y1,symm)      
@@ -145,12 +146,19 @@ class Command:
             str_add_f=''
             indent=1
             if str_old[0]=='>':
-            	ed_self.insert(0,lnum+1,'> \n')
-            	ed_self.set_caret(2,lnum+1)
-            	return False
+                p=''
+                while len(str_old)>0:
+                    if str_old[0] in [' ','>','\t']:
+                        p+=str_old[0]
+                        str_old=str_old[1:]
+                    else:
+                        break
+                ed_self.insert(0,lnum+1,p+'\n')
+                ed_self.set_caret(len(p),lnum+1)
+                return False
             if len(str_old)==0:
                 return True
-            print('st0'+str_old)
+            self.log('st0'+str_old)
             resnum=0
             #if str_old[0]=='#':
             for i in str_old:
@@ -168,7 +176,7 @@ class Command:
                 indent+=1
             if not str_old:
                 return True
-            print('nn'+str_old)
+            self.log('nn'+str_old)
             if str_old[0] in '-+*':
                 is_gfm = (str_old[2:5] in ['[ ]','[X]','[x]'])
                 if len(str_old)==1 and str_old[0]=='-':
@@ -225,14 +233,12 @@ class Command:
                 if y2<y1:
                     y1, y2 = y2, y1
                 for i in range(y1, y2+1):
-                    if ed_self.get_text_line(i)[0]=='>':
-                        ed_self.insert(0,i,'>')
-                    else:
-                        ed_self.insert(0,i,'> ')
+                    ed_self.insert(0,i,'> ')
                 return False
         if key==32:
             # space
             x,y,x1,y1 = ed_self.get_carets()[0]
+        
             if x==0:
                 return
             strt=ed_self.get_text_substr(x-1,y,x+1,y)
@@ -261,6 +267,7 @@ class Command:
             	
             if 's' in state:
                 #str_old=str_old=ed_self.get_text_line(str_old_num)
+        
                 if str_old[0]==' ' or str_old[0]=='\t':
                     if str_old[0]==' ':
                         str_old=str_old[1:]
@@ -290,11 +297,10 @@ class Command:
             
             if len(str_old)==0:
                 return True
-        
             str_old=ed_self.get_text_line(str_old_num)
-            print('so='+str_old)
+            self.log('so='+str_old)
             if str_old[0] in '-=' :
-                print('kpa')
+                self.log('kpa')
                 if str_old_num>0:#len(str_old)>=2:
                     preline=ed_self.get_text_line(str_old_num-1)
                     f=False
@@ -327,7 +333,7 @@ class Command:
                     str_old=str_old[2:]
                     if len(str_old)==0:
                         break
-            print('kp0')
+            self.log('kp0')
             if is_numbered:
                 ed_self.set_text_line(str_old_num,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+'1.'+str_old)
                 ed_self.set_caret(len(ed_self.get_text_line(str_old_num)),str_old_num)
@@ -342,9 +348,9 @@ class Command:
                         i+=1
                 return barr[0]
             if len(str_old)==0:return
-            print('kp1')
+            self.log('kp1')
             if str_old[0]in self.barr:
-                print('kp2')
+                self.log('kp2')
                 if str_old[0]=='*':
                     x,y=ed_self.get_carets()[0][:2]
                     strt=ed_self.get_text_line(y)
@@ -370,9 +376,9 @@ class Command:
                     y2,y1=y1,y2
                 if x2==-1 and y2==-1:
                     #ed_self.insert(x1,y1,'**')
-                    print('h2')
+                    self.log('h2')
                     return True
-                print('h2')
+                self.log('h2')
                 ed_self.insert(x2,y2,'*')
                 ed_self.insert(x1,y1,'*')
                 if y2==y1:
@@ -382,7 +388,7 @@ class Command:
                 return False
         elif key==189:
             # _ symbol
-            print(189)
+            self.log(189)
             if 's' in state:
                 x1,y1,x2,y2=ed_self.get_carets()[0]
                 if x2==-1 and y2==-1:
@@ -401,11 +407,11 @@ class Command:
                     ed_self.set_caret(x1+1,y1,x2,y2)
                 return False
         else:
-            print(key)
+            self.log(key)
     def on_insert(self, ed_self, text):
         if text in ['"',"'",# deleted hashtag symbol
         '~','*','`']:
-            print('dd')
+            self.log('dd')
             if text=='#' and not self.need_doubling_res:
                 return
             x,y = ed_self.get_carets()[0][:2]
