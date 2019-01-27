@@ -184,7 +184,7 @@ class Command:
                 if str_old[0]=='-' and not str_old[1]==' ':
                     return True
                 if str_old[0]=='*':
-                    if '*' in str_old[1:]:
+                    if '*' in str_old[1:] and not str_old[1]==' ':
                         return True
                 x,y = ed_self.get_carets()[0][:2]
                 empty=True
@@ -218,6 +218,7 @@ class Command:
                                 f=False
                         if f:
                             ed_self.set_text_line(lnum,' ')
+                            ed_self.set_caret(0,lnum)
                             return False
                         nm=int(s)
                         car = ed_self.get_carets()[0]
