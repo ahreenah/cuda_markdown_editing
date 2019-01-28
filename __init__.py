@@ -393,8 +393,9 @@ class Command:
             if 's' in state:
                 x1,y1,x2,y2=ed_self.get_carets()[0]
                 if x2==-1 and y2==-1:
-                    ed_self.insert(x1,y1,'_')
-                    return True
+                    ed_self.insert(x1,y1,'__')
+                    ed_self.set_caret(x1+1,y1)
+                    return False
                 if (x2<x1 and y2==y1) or y2<y1:
                     x1,x2=x2,x1
                     y1,y2=y2,y1
