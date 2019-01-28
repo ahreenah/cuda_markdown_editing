@@ -217,8 +217,8 @@ class Command:
                             if not str_old[k] in [' ','\t']:
                                 f=False
                         if f:
-                            ed_self.set_text_line(lnum,' ')
-                            ed_self.set_caret(0,lnum)
+                            ed_self.set_text_line(lnum,str_add_f)
+                            ed_self.set_caret(indent-1 if indent>0 else 0,lnum)
                             return False
                         nm=int(s)
                         car = ed_self.get_carets()[0]
