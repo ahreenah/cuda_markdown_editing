@@ -401,7 +401,7 @@ class Command:
                 ed_self.insert(x2,y2,'_')
                 ed_self.insert(x1,y1,'_')
                 if (y2==-1) and (x2==-1):
-                    return True
+                    return False
                 if y2==y1:
                     ed_self.set_caret(x1+1,y1,x2+1,y2)
                 else:
@@ -411,11 +411,9 @@ class Command:
             self.log(key)
     def on_insert(self, ed_self, text):
         if text in ['"',"'",# deleted hashtag symbol
-        '~','*','`','_']:
+        '~','*','`']:
             self.log('dd')
             if text=='#' and not self.need_doubling_res:
                 return
             x,y = ed_self.get_carets()[0][:2]
             ed_self.insert(x,y,text)
-            ed_self.set_caret(x+1,y)
-            return False
