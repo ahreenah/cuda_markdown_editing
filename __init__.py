@@ -143,6 +143,7 @@ class Command:
             # enter
             lnum=ed_self.get_carets()[0][1]# line number
             str_old=ed_self.get_text_line(lnum)
+            len_old=len(str_old)
             str_add_f=''
             indent=1
             if str_old[0]=='>':
@@ -153,7 +154,7 @@ class Command:
                         str_old=str_old[1:]
                     else:
                         break
-                ed_self.insert(0,lnum+1,p+'\n')
+                ed_self.insert(len_old,lnum,'\n'+p+'\n')
                 ed_self.set_caret(len(p),lnum+1)
                 return False
             if len(str_old)==0:
@@ -366,7 +367,7 @@ class Command:
                 x,y = ed_self.get_carets()[0][:2]
                 if str_old[2:]=='':
                     ed_self.set_text_line(y,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+nextb(str_old[0])+' '+str_old[2:])
-                ed_self.set_caret(x+2,y)
+                ed_self.set_caret(x+ed_self.get_prop(PROP_INDENT_SIZE),y)
                 return False
             return True
         elif key==56:
