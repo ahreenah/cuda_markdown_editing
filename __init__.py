@@ -14,6 +14,7 @@ class Command:
     def log(self,s):
     	pass
     def __init__(self):
+        
         self.MAX_HASHES=6
         self.DOUBLE_MAX_HASHES=self.MAX_HASHES*2
         self.bullets=ini_read('cuda_markdown_editing.ini','op','list_indent_bullets','*+-')
@@ -40,6 +41,7 @@ class Command:
         file_open(fn_config)
                 
     def on_key(self, ed_self, key, state):
+        indent_size=ed_self.get_prop(PROP_INDENT_SIZE)
         if key==51:
             # hash symnol
             if 's' in state:
@@ -140,6 +142,7 @@ class Command:
                         ed_self.set_caret(x1+2,y1, x2,y2)
                 return False
         if key==13:
+            
             # enter
             lnum=ed_self.get_carets()[0][1]# line number
             str_old=ed_self.get_text_line(lnum)
@@ -154,7 +157,7 @@ class Command:
                         str_old=str_old[1:]
                     else:
                         break
-                ed_self.insert(len_old,lnum,'\n'+p+'\n')
+                ed_self.insert(len_old,lnum,'\n'+p)
                 ed_self.set_caret(len(p),lnum+1)
                 return False
             if len(str_old)==0:
@@ -338,7 +341,7 @@ class Command:
                         break
             self.log('kp0')
             if is_numbered:
-                ed_self.set_text_line(str_old_num,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+'1.'+str_old)
+                ed_self.set_text_line(str_old_num,str_indent+' '*indent_size+'1.'+str_old)
                 ed_self.set_caret(len(ed_self.get_text_line(str_old_num)),str_old_num)
                 return False
             #barr=['*','-','+','\\']
@@ -363,11 +366,11 @@ class Command:
                     if '*' in strt:
                         return False
                     else:
-                        ed_self.insert(0,y,' '*ed_self.get_prop(PROP_INDENT_SIZE))
+                        ed_self.insert(0,y,' '*indent_size)
                 x,y = ed_self.get_carets()[0][:2]
                 if str_old[2:]=='':
-                    ed_self.set_text_line(y,str_indent+' '*ed_self.get_prop(PROP_INDENT_SIZE)+nextb(str_old[0])+' '+str_old[2:])
-                ed_self.set_caret(x+ed_self.get_prop(PROP_INDENT_SIZE),y)
+                    ed_self.set_text_line(y,str_indent+' '*indent_size+nextb(str_old[0])+' '+str_old[2:])
+                ed_self.set_caret(x+indent_size,y)
                 return False
             return True
         elif key==56:
