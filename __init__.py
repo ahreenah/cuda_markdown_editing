@@ -261,11 +261,12 @@ class Command:
                 return False
         if key==9:
             #tab symbol
+            if not state in ('','s'):
+                return True
             str_old_num=ed_self.get_carets()[0][1]
             str_old=ed_self.get_text_line(str_old_num)
             if str_old=='':
             	return True
-            	
             if 's' in state:
                 #str_old=str_old=ed_self.get_text_line(str_old_num)
         
