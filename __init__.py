@@ -373,8 +373,8 @@ class Command:
                 ed_self.set_caret(x+indent_size,y)
                 return False
             return True
-        elif key==56:
-        # * symbol
+        elif key in (56, 106):
+        # * and NumPad *
             if 's' in state:
                 x1,y1,x2,y2=ed_self.get_carets()[0]
                 if (x2!=-1 and y2!=-1) and((x2<x1 and y2==y1) or y2<y1):
